@@ -5,7 +5,7 @@ Tweets
 {% endblock %}
 
 {% block content %}
-<div class="container" style="margin-right: 10%; margin-left: 10%; padding-bottom: 50px;">
+<div class="container" style="margin-right: 5%; margin-left: 5%; padding-bottom: 50px;">
     <h1>Tweets</h1>
 
     <div class="table-container" style="width: 50%; float: left;"> <!-- Left half for table -->
@@ -17,29 +17,32 @@ Tweets
                     <th>Handle</th>
                     <th>Timestamp</th>
                     <th>Content</th>
+                    <th>Action</th> 
                 </tr>
             </thead>
             <tbody>
                 {% for entry in entries %}
-                    <tr>
-                        <td>{{ entry.index }}</td>
-                        <td>{{ entry.Name }}</td>
-                        <td>{{ entry.Handle }}</td>
-                        <td>{{ entry.Timestamp }}</td>
-                        <td class="scrollable-cell">{{ entry.Content }}</td>
-                    </tr>
-                {% endfor %}
+                <tr>
+                    <td class="scrollable-cell">{{ entry.index }}</td>
+                    <td class="scrollable-cell">{{ entry.Name }}</td>
+                    <td class="scrollable-cell">{{ entry.Handle }}</td>
+                    <td class="scrollable-cell">{{ entry.Timestamp }}</td>
+                    <td class="scrollable-cell">
+                        <div class="scrollable-cell">{{ entry.Content }}</div>
+                    </td>
+                    <td>
+                        <form action="/generate_from_tweet" method="POST">
+                            <input type="hidden" name="text" value="{{ entry.Content }}">
+                            <input type="submit" value="Generate Summary">
+                        </form>
+                    </td>
+                </tr>
+            {% endfor %}
             </tbody>
         </table>
     </div>
-
-    <div class="generate-container" style="width: 40%; float: right;">
-        <h1>Generate News Article</h1>
-        <form action="/generate_from_tweet" method="POST">
-            <label for="text">Enter Text:</label>
-            <input type="text" id="text" name="text" required>
-            <input type="submit" value="Generate Summary">
-        </form>
+    <div class="generate-container" style="width: 40%; float: right; padding-left:10%; width: 500px;">
+        <h1>Generated News</h1>
         {% if summary %}
         <h2>Summary:</h2>
         <p>{{ summary }}</p>
@@ -49,6 +52,15 @@ Tweets
     <div style="clear: both;"></div>
 </div>
 
+
+<style>
+    .scrollable-cell {
+        padding-right:10px;
+        max-height: 150px;
+        max-width: 250px;
+        overflow: auto;
+    }
+    </style>
 <script>
 new DataTable('#example');
 </script>
