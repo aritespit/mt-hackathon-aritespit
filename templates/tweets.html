@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block title %}
+Tweets
+{% endblock %}
+
+{% block content %}
+<div class="container" style="margin-right: 10%; margin-left: 10%; padding-bottom: 50px;">
+    <h1>Tweets</h1>
+
+    <div class="table-container" style="width: 50%; float: left;"> <!-- Left half for table -->
+        <table id="example" class="display hover my-table" style="width:100%">
+            <thead>
+                <tr>
+                    <th>Index</th>
+                    <th>Name</th>
+                    <th>Handle</th>
+                    <th>Timestamp</th>
+                    <th>Content</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for entry in entries %}
+                    <tr>
+                        <td>{{ entry.index }}</td>
+                        <td>{{ entry.Name }}</td>
+                        <td>{{ entry.Handle }}</td>
+                        <td>{{ entry.Timestamp }}</td>
+                        <td class="scrollable-cell">{{ entry.Content }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="generate-container" style="width: 40%; float: right;">
+        <h1>Generate News Article</h1>
+        <form action="/generate_from_tweet" method="POST">
+            <label for="text">Enter Text:</label>
+            <input type="text" id="text" name="text" required>
+            <input type="submit" value="Generate Summary">
+        </form>
+        {% if summary %}
+        <h2>Summary:</h2>
+        <p>{{ summary }}</p>
+        {% endif %}
+    </div>
+
+    <div style="clear: both;"></div>
+</div>
+
+<script>
+new DataTable('#example');
+</script>
+{% endblock %}

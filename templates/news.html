@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+
+{% block title %}
+News
+{% endblock %}
+
+{% block content %}
+<div class="container" style="margin-right: 10%; margin-left: 10%; padding-bottom: 50px;">
+    <h1>News</h1>
+
+    <div class="table-container" style="width: 50%; float: left;"> <!-- Left half for table -->
+        <table id="example" class="display hover my-table" style="width:100%">
+            <thead>
+                <tr>
+                    <th>Index</th>
+                    <th>Link</th>
+                    <th>Content</th>
+                    <th>Action</th> <!-- Add an Action column -->
+                </tr>
+            </thead>
+            <tbody>
+                {% for entry in entries %}
+                    <tr>
+                        <td>{{ entry.index }}</td>
+                        <td>{{ entry.Link }}</td>
+                        <td>
+                            <div class="scrollable-cell">{{ entry.Content }}</div>
+                        </td>
+                        <td>
+                            <form action="/generate_from_news" method="POST">
+                                <input type="hidden" name="text" value="{{ entry.Content }}">
+                                <input type="submit" value="Generate Summary">
+                            </form>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="generate-container" style="width: 40%; float: right;">
+        <h1>Generated Summary</h1>
+        {% if summary %}
+        <h2>Summary:</h2>
+        <p>{{ summary }}</p>
+        {% endif %}
+    </div>
+
+    <div style="clear: both;"></div> 
+</div>
+
+<style>
+.scrollable-cell {
+    max-height: 250px;
+    max-width: 250px;
+    overflow: auto;
+}
+</style>
+
+<script>
+new DataTable('#example');
+</script>
+{% endblock %}
