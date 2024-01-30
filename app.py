@@ -26,6 +26,8 @@ class Tweet(db.Model):
     Handle = db.Column(db.String(255))
     Timestamp = db.Column(db.DateTime)
     Content = db.Column(db.Text)
+    is_generated = db.Column(db.Boolean)
+    news = db.Column(db.Text)
     
     
 class News(db.Model):
@@ -33,30 +35,32 @@ class News(db.Model):
     index = db.Column(db.Integer, primary_key=True)
     Link = db.Column(db.Text)
     Content = db.Column(db.Text)
-    
+    summary = db.Column(db.Text)
 @app.route('/')
 def home():
     return render_template('index.html')
 
-@app.route('/tweets')
+
+
+@app.route('/tweets', methods=['GET', 'POST'])
 def tweets():
+    
     entries = Tweet.query.all()
-    return render_template('tweets.html', entries=entries)
-
-@app.route('/news')
-def news():
-    entries = News.query.all()
-    return render_template('news.html', entries=entries)
-
-# used for creating news from tweets
-@app.route('/generate_from_tweet', methods=['POST'])
-def generate_news():
     summary = None
+    index=None
     if request.method == 'POST':
         text = request.form.get('text')
-        summary = None
-
-        if text:
+        index = request.form.get('index')
+        generated_news = request.form.get('generated_news')
+        if generated_news:
+            # Find the tweet based on the content
+            tweet_to_update = Tweet.query.filter_by(index=index).first()
+           
+            if tweet_to_update:
+                tweet_to_update.news = generated_news
+                tweet_to_update.is_generated = 1
+                db.session.commit()
+        elif text:
             llm = OpenAI(api_key="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")
 
             template = """
@@ -78,20 +82,29 @@ def generate_news():
             response = llm_chain.generate([{"text": text}])
             summary = response.generations[0][0].text
 
-    entries = Tweet.query.all()
-
-    return render_template('tweets.html', entries=entries, summary=summary)
+    return render_template('tweets.html', entries=entries, summary=summary,index=index)
 
 
-# used for creating tweets from news
-@app.route('/generate_from_news', methods=['POST'])
+@app.route('/news', methods=['GET','POST'])
 def generate_tweets():
+    index=None
     summary = None
     if request.method == 'POST':
         text = request.form.get('text')
         summary = None
-
-        if text:
+        index = request.form.get('index')
+        generated_summary = request.form.get('generated_summary')
+        
+        if generated_summary:
+            # Find the tweet based on the content
+            summary_to_update = News.query.filter_by(index=index).first()
+            print(summary_to_update)
+            if summary_to_update:
+                summary_to_update.summary = generated_summary
+                db.session.commit()
+        
+        
+        elif text:
             llm = OpenAI(api_key="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")
 
             template = """
@@ -115,7 +128,7 @@ def generate_tweets():
 
     entries = News.query.all()
 
-    return render_template('news.html', entries=entries, summary=summary)
+    return render_template('news.html', entries=entries, summary=summary,index=index)
 
 if __name__ == '__main__':
     app.run(debug=True)

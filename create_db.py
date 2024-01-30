@@ -3,15 +3,17 @@ import mysql.connector
 from dotenv import load_dotenv
 import pandas as pd
 from sqlalchemy import create_engine
+import sqlalchemy
 
 def get_credentials():
     load_dotenv()
+
     db_host = os.getenv("DB_HOST")
     db_port = os.getenv("DB_PORT")
     db_user = os.getenv("DB_USER")
     db_password = os.getenv("DB_PASSWORD")
     db_database = os.getenv("DB_DATABASE")
-
+    print(db_host)
     return db_host, db_port, db_user, db_password, db_database
 
 def create_db():
@@ -42,15 +44,20 @@ def save_to_db(df, table_name):
     try:
         engine = create_engine(f'mysql+mysqlconnector://{db_user}:{db_password}@{db_host}:{db_port}/{db_database}')
 
+        if table_name=="tweets":
+            additional_columns = {'is_generated': 0, 'news': ""}
+        else:
+            additional_columns = {'summary': ""}
+        df = df.assign(**additional_columns)
+
         df.to_sql(table_name, con=engine, if_exists='replace')
 
         engine.dispose()
 
-        print(f"DataFrame saved to '{table_name}' table in the 'anadoluajansi' database.")
+        print(f"DataFrame saved to '{table_name}' table in the 'anadoluajansi' database with additional columns.")
 
     except Exception as e:
         print(f"An error occurred: {e}")
-
 
 if __name__ == '__main__':
     create_db()
