@@ -1,12 +1,12 @@
 {% extends "base.html" %}
 
 {% block title %}
-Tweets
+Twitler
 {% endblock %}
 
 {% block content %}
 <div class="container" style="margin-right: 5%; margin-left: 5%; padding-bottom: 50px;">
-    <h1>Tweets</h1>
+    <h1>Twitler</h1>
 
     <div class="table-container" style="width: 50%; float: left;"> <!-- Left half for table -->
         <table id="example" class="display hover my-table" style="width:100%">
@@ -22,7 +22,7 @@ Tweets
             </thead>
             <tbody>
                 {% for entry in entries %}
-                <tr style="background-color: {% if entry.is_generated %} #c3e6cb {% else %} #ffff9f {% endif %}">
+                <tr {% if entry.is_generated %}style="background-color: #c3e6cb;"{% else %}style="background-color: #ffff9f;"{% endif %}>
                     <td class="scrollable-cell">{{ entry.index }}</td>
                     <td class="scrollable-cell">{{ entry.Name }}</td>
                     <td class="scrollable-cell">{{ entry.Handle }}</td>
@@ -31,11 +31,13 @@ Tweets
                         <div class="scrollable-cell">{{ entry.Content }}</div>
                     </td>
                     <td>
-                        <form action="/tweets" method="POST">
-                            <input type="hidden" name="text" value="{{ entry.Content }}">
-                            <input type="hidden" name="index" value="{{ entry.index }}">
-                            <input type="submit" value="Generate Summary">
+                        <form action="/tweets" method="POST" class="my-4">
+                            <input type="hidden" name="name" value="{{ entry.Name }}" />
+                            <input type="hidden" name="text" value="{{ entry.Content }}" />
+                            <input type="hidden" name="index" value="{{ entry.index }}" />
+                            <button type="submit" class="btn btn-primary">Generate Summary</button>
                         </form>
+                        
                     </td>
                 </tr>
             {% endfor %}
@@ -43,9 +45,9 @@ Tweets
         </table>
     </div>
     <div class="generate-container" style="float: right; padding-left: 10%;">
-        <h1>Generated News</h1>
+        <h1>Üretilmiş Haber</h1>
         {% if summary %}
-        <h2>Summary:</h2>
+        <h2>Haber:</h2>
 		<form action="/tweets" method="POST">
 			<textarea name="generated_news" style="width: 100%;height:450px;">{{ summary }}</textarea>
 			<input type="hidden" name="index" value="{{ index }}">
@@ -68,9 +70,49 @@ Tweets
     .generate-container textarea {
         width: 100%; /* Make the textarea expand to 100% of its container */
     }
+    .small-button {
+    width: 40px;
+    height: 40px;
+    padding: 3px;
+    margin-right: 5px;
+    cursor: pointer;
+}
 </style>
 
 <script>
-    new DataTable('#example');
-</script>
+    var table = new DataTable("#example");
+  
+    var refreshButton = document.createElement("img");
+    refreshButton.id = "refreshButton";
+    refreshButton.src = "https://www.svgrepo.com/show/109169/refresh.svg";
+    refreshButton.className = "btn-refresh small-button";
+
+  
+    var isRefreshing = false;
+  
+    refreshButton.addEventListener("click", function () {
+      if (!isRefreshing) {
+        isRefreshing = true;
+        refreshButton.style.pointerEvents = "none";
+  
+        fetch("/refresh_tweets", {
+          method: "GET",
+        })
+          .then(function (response) {
+            return response.text();
+          })
+          .then(function (data) {
+            location.reload();
+          })
+          .finally(function () {
+            isRefreshing = false;
+            refreshButton.style.pointerEvents = "auto";
+          });
+      }
+    });
+  
+    var searchLabel = document.querySelector(".dataTables_filter label");
+  
+    searchLabel.insertBefore(refreshButton, searchLabel.firstChild);
+  </script>
 {% endblock %}

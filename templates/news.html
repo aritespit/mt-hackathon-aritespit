@@ -6,7 +6,7 @@ News
 
 {% block content %}
 <div class="container" style="margin-right: 5%; margin-left: 5%; padding-bottom: 50px;">
-    <h1>News</h1>
+    <h1>Haberler</h1>
 
     <div class="table-container" style="width: 50%; float: left;"> <!-- Left half for table -->
         <table id="example" class="display hover my-table" style="width:100%">
@@ -27,11 +27,12 @@ News
                             <div class="scrollable-cell">{{ entry.Content }}</div>
                         </td>
                         <td>
-                            <form action="/news" method="POST">
-                                <input type="hidden" name="text" value="{{ entry.Content }}">
-								<input type="hidden" name="index" value="{{ index }}">
-                                <input type="submit" value="Generate Summary">
+                            <form action="/news" method="POST" class="my-4">
+                                <input type="hidden" name="text" value="{{ entry.Content }}" />
+                                <input type="hidden" name="index" value="{{ index }}" />
+                                <button type="submit" class="btn btn-primary">Generate Summary</button>
                             </form>
+                            
                         </td>
                     </tr>
                 {% endfor %}
@@ -43,9 +44,9 @@ News
  
     
 	<div class="generate-container" style="float: right; padding-left: 10%;">
-        <h1>Generated Summary</h1>
+        <h1>Üretilmiş Yeni Medya içeriği</h1>
         {% if summary %}
-        <h2>Summary:</h2>
+        <h2>İçerik:</h2>
 		<form action="/news" method="POST">
 			<textarea name="generated_summary" style="width: 100%;height:450px;">{{ summary }}</textarea>
 			<input type="hidden" name="index" value="{{ index }}">
@@ -63,9 +64,50 @@ News
     max-width: 250px;
     overflow: auto;
 }
+.small-button {
+    width: 40px;
+    height: 40px;
+    padding: 3px;
+    margin-right: 5px;
+    cursor: pointer;
+}
 </style>
 
+
 <script>
-new DataTable('#example');
-</script>
+    var table = new DataTable("#example");
+  
+    var refreshButton = document.createElement("img");
+    refreshButton.id = "refreshButton";
+    refreshButton.src = "https://www.svgrepo.com/show/109169/refresh.svg";
+    refreshButton.className = "btn-refresh small-button";
+
+  
+    var isRefreshing = false;
+  
+    refreshButton.addEventListener("click", function () {
+      if (!isRefreshing) {
+        isRefreshing = true;
+        refreshButton.style.pointerEvents = "none";
+  
+        fetch("/refresh_news", {
+          method: "GET",
+        })
+          .then(function (response) {
+            return response.text();
+          })
+          .then(function (data) {
+            location.reload();
+          })
+          .finally(function () {
+            isRefreshing = false;
+            refreshButton.style.pointerEvents = "auto";
+          });
+      }
+    });
+  
+    var searchLabel = document.querySelector(".dataTables_filter label");
+  
+    searchLabel.insertBefore(refreshButton, searchLabel.firstChild);
+  </script>
 {% endblock %}

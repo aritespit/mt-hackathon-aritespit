@@ -1,9 +1,11 @@
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify, redirect, url_for
 from langchain.chains.llm import LLMChain
 from langchain.llms.openai import OpenAI
 from langchain.prompts.prompt import PromptTemplate
 from flask_sqlalchemy import SQLAlchemy
 from dotenv import load_dotenv
+from scrapers import aa_scraper
+from create_db import *
 import os
 
 load_dotenv()
@@ -36,19 +38,21 @@ class News(db.Model):
     Link = db.Column(db.Text)
     Content = db.Column(db.Text)
     summary = db.Column(db.Text)
+    
 @app.route('/')
 def home():
     return render_template('index.html')
 
 
-
+# creating news from tweets
 @app.route('/tweets', methods=['GET', 'POST'])
 def tweets():
-    
+    llm = OpenAI(model_name="gpt-3.5-turbo-instruct", api_key="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", temperature=0.1)
     entries = Tweet.query.all()
     summary = None
     index=None
     if request.method == 'POST':
+        person = request.form.get('name')
         text = request.form.get('text')
         index = request.form.get('index')
         generated_news = request.form.get('generated_news')
@@ -60,33 +64,35 @@ def tweets():
                 tweet_to_update.news = generated_news
                 tweet_to_update.is_generated = 1
                 db.session.commit()
+                
         elif text:
-            llm = OpenAI(api_key="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")
-
             template = """
-            You are an AI assistant for News Agency to shorten the longer news article into 3 bullet points. You are required to understand the context then create these bulletpoints. Your bulletpoints should contain important parts of the article, i.e. parts that contain numerical values or explain the text best.
+            You are a news assistant that turns the posts published by institutions, organizations or ministers on their social media accounts into news. 
+            You need to understand the context and convert it into a news format. The news format includes a headline (title), and a body part for the newly generated full text of the news. 
+            Body part has 3 paragraphs. First paragraph is the summary of tweet.
+            Second paragraph must JUST write surname of the person if  text in parentheses indicates a person, second paragraph must JUST write full name of the ministry or organization if  text in parentheses indicates a ministry or organizational account. 
+            Lastly, third paragraph gives tweet and its' explanation. 
 
             ### Instruction:
-            Create three bulletpoints that summarize the important parts of the news article.
-            Do it as thoroughly and detailed as you can while keeping the bulletpoints short.
-            Always reply in Turkish; if your answer is not in Turkish, translate it.
-            Keep the bulletpoints short.
-
-            ### User Input: {text}
-            ### Response: Your Answer
-
+            The text in parentheses indicates which person, institution or organization gave the statement. 
+            Create news that contains title, and body parts meanwhile news format defined above. 
+            Replying in Turkish is a MUST, if your answer is going to be english translate it to Turkish
+            
+            Now your input is: {text}
             """
-
+            text = (person + " " + text)
             prompt = PromptTemplate(input_variables=["text"], template=template)
             llm_chain = LLMChain(llm=llm, prompt=prompt)
             response = llm_chain.generate([{"text": text}])
+            print(response)
             summary = response.generations[0][0].text
 
     return render_template('tweets.html', entries=entries, summary=summary,index=index)
 
-
+# creating tweets from news
 @app.route('/news', methods=['GET','POST'])
-def generate_tweets():
+def news():
+    llm = OpenAI(model_name="gpt-3.5-turbo-instruct", api_key="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", temperature=0.1)
     index=None
     summary = None
     if request.method == 'POST':
@@ -105,7 +111,6 @@ def generate_tweets():
         
         
         elif text:
-            llm = OpenAI(api_key="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")
 
             template = """
             You are an AI assistant for News Agency to shorten the longer news article into 3 bullet points. You are required to understand the context then create these bulletpoints. Your bulletpoints should contain important parts of the article, i.e. parts that contain numerical values or explain the text best.
@@ -129,6 +134,17 @@ def generate_tweets():
     entries = News.query.all()
 
     return render_template('news.html', entries=entries, summary=summary,index=index)
+
+@app.route('/refresh_news', methods=['GET'])
+def refresh_news():
+    df = aa_scraper.scrape()
+    save_to_db(df, 'news') 
+    return redirect(url_for('news'))
+
+@app.route('/refresh_tweets', methods=['GET'])
+def refresh_tweets():
+    print("Not implemented yet")
+    return redirect(url_for('tweets'))
 
 if __name__ == '__main__':
     app.run(debug=True)

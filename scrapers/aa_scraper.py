@@ -13,7 +13,7 @@ from selenium.webdriver.support import expected_conditions as EC
 
 
 def selenium_driver(scroll_count=10):
-    """    Creates a selenium driver and scrolls down the page to load more content.
+    """Creates a selenium driver in headless mode and scrolls down the page to load more content.
 
     Args:
         scroll_count (int, optional): Number of times to scroll down the page. Defaults to 10.
@@ -21,27 +21,30 @@ def selenium_driver(scroll_count=10):
     Returns:
         _type_: expanded page content
     """
-    driver = webdriver.Firefox()
+    options = webdriver.FirefoxOptions()
+    options.add_argument("--headless")
+    driver = webdriver.Firefox(options=options)
 
     url = "https://www.aa.com.tr/tr/gundem"
     driver.get(url)
 
     for _ in tqdm(range(scroll_count)):
         button_locator = (By.CSS_SELECTOR, ".button-daha.text-center")
-        
+
         button = WebDriverWait(driver, 10).until(EC.presence_of_element_located(button_locator))
         driver.execute_script("arguments[0].scrollIntoView();", button)
-        
+
         WebDriverWait(driver, 10).until(EC.invisibility_of_element_located((By.ID, "overlay-id")))
-        
+
         driver.execute_script("arguments[0].click();", button)
-        
+
         driver.implicitly_wait(3)
 
     expanded_page_content = driver.page_source
 
     driver.quit()
     return expanded_page_content
+
     
 def get_urls(expanded_page_content) -> None:
     """Extracts and saves URLs from the expanded page content.
@@ -100,6 +103,11 @@ def get_article_contents() -> list:
         detay_icerik_texts = [text for text in detay_icerik_texts if 'Bu haberi paylaşın' not in text]
         detay_icerik_texts = " ".join(detay_icerik_texts)
         
+        # Remove the content after the specified string
+        end_index = detay_icerik_texts.find('Anadolu Ajansı web sitesinde, AA Haber Akış Sistemi (HAS) üzerinden abonelere sunulan haberler, özetlenerek yayımlanmaktadır.')
+        if end_index != -1:
+            detay_icerik_texts = detay_icerik_texts[:end_index]
+        
         data.append([link, detay_icerik_texts])
 
     return data
@@ -115,6 +123,14 @@ def save_data(data):
     
     df = pd.DataFrame(data, columns=['Link', 'Content'])
     df.to_csv(csv_file_path, index=False)
+    
+def scrape():
+    expanded_page_content = selenium_driver()
+    get_urls(expanded_page_content)
+    data = get_article_contents()
+    df = pd.DataFrame(data, columns=['Link', 'Content'])
+    save_data(data)
+    return df
     
     
 if __name__ == '__main__':
