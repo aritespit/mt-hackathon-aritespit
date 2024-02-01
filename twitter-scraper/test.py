@@ -7,9 +7,12 @@ scraper = Twitter_Scraper(
 )
 scraper.login()
 
+with open('twitter_handles.txt', 'r') as file:
+    twitter_handles = file.read().split('\n')
+
 scraper.scrape_tweets(
     max_tweets=10,
-    scrape_usernames=["RTErdogan","aBayraktar1","superlig",]
+    scrape_usernames=twitter_handles
 )
 
 scraper.driver.close()
