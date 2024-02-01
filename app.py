@@ -56,6 +56,8 @@ def tweets():
         text = request.form.get('text')
         index = request.form.get('index')
         generated_news = request.form.get('generated_news')
+        display_no = request.form.get('display_no')
+        feedback = request.form.get('feedback')
         if generated_news:
             # Find the tweet based on the content
             tweet_to_update = Tweet.query.filter_by(index=index).first()
@@ -64,7 +66,30 @@ def tweets():
                 tweet_to_update.news = generated_news
                 tweet_to_update.is_generated = 1
                 db.session.commit()
-                
+        elif display_no:
+            print(display_no)
+            tweet_to_display = Tweet.query.filter_by(index=display_no).first()
+            print(tweet_to_display)
+            summary = tweet_to_display.news   
+        elif feedback:
+            print(index)
+            template="""
+            You are a news assistant that turns the posts published by institutions, organizations or ministers on their social media accounts into news.
+            There is a feedback given you for you to correct given text.
+            
+            ### Instruction:
+            Replying in Turkish is a MUST, if your answer is going to be english translate it to Turkish
+            
+            Now text is : {text}
+            Now feedback is: {feedback}
+            """
+            tweet_to_adjust = Tweet.query.filter_by(index=index).first()
+            text=tweet_to_adjust.news
+            prompt = PromptTemplate(input_variables=["text","feedback"], template=template)
+            llm_chain = LLMChain(llm=llm, prompt=prompt)
+            response = llm_chain.generate([{"text": text, "feedback": feedback}])
+            print(response)
+            summary = response.generations[0][0].text
         elif text:
             template = """
             You are a news assistant that turns the posts published by institutions, organizations or ministers on their social media accounts into news. 

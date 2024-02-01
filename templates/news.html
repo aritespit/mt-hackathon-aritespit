@@ -30,7 +30,7 @@ News
                             <form action="/news" method="POST" class="my-4">
                                 <input type="hidden" name="text" value="{{ entry.Content }}" />
                                 <input type="hidden" name="index" value="{{ index }}" />
-                                <button type="submit" class="btn btn-primary">Generate Summary</button>
+                                <button type="submit" class="btn btn-primary">Özetle</button>
                             </form>
                             
                         </td>
@@ -44,7 +44,7 @@ News
  
     
 	<div class="generate-container" style="float: right; padding-left: 10%;">
-        <h1>Üretilmiş Yeni Medya içeriği</h1>
+        <h1>Üretilmiş Yeni Medya İçeriği</h1>
         {% if summary %}
         <h2>İçerik:</h2>
 		<form action="/news" method="POST">
