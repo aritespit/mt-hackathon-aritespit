@@ -2,7 +2,7 @@ import os
 import mysql.connector
 from dotenv import load_dotenv
 import pandas as pd
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, inspect
 import sqlalchemy
 
 def get_credentials():
@@ -39,25 +39,36 @@ def create_db():
         print(f"Error: {err}")
 
 def save_to_db(df, table_name):
+    # get credentials
     db_host, db_port, db_user, db_password, db_database = get_credentials()
 
     try:
-        engine = create_engine(f'mysql+mysqlconnector://{db_user}:{db_password}@{db_host}:{db_port}/{db_database}')
-
-        if table_name=="tweets":
+        engine = create_engine(f'mysql+mysqlconnector://{db_user}:{db_password}@{db_host}:{db_port}/{db_database}')           
+        # add additional columns
+        if table_name == "tweets":
             additional_columns = {'is_generated': 0, 'news': ""}
         else:
             additional_columns = {'summary': ""}
         df = df.assign(**additional_columns)
+        # remove duplicates
+        if sqlalchemy.inspect(engine).has_table(table_name):
+            print("inner loop boop")
+            existing_records = pd.read_sql(f'SELECT DISTINCT Content FROM {table_name}', con=engine)
+            df = df[~df['Content'].isin(existing_records['Content'])]
+            print(len(df))
+        # save to db
+        if not df.empty:
+            # append to table
+            df.to_sql(table_name, con=engine, if_exists='append', index=True)
 
-        df.to_sql(table_name, con=engine, if_exists='replace')
+            engine.dispose()
 
-        engine.dispose()
-
-        print(f"DataFrame saved to '{table_name}' table in the 'anadoluajansi' database with additional columns.")
-
+            print(f"DataFrame saved to '{table_name}'.")
+        else:
+            print("No new records to save.")
     except Exception as e:
         print(f"An error occurred: {e}")
+
 
 if __name__ == '__main__':
     create_db()
