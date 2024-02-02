@@ -6,6 +6,7 @@ from flask_sqlalchemy import SQLAlchemy
 from dotenv import load_dotenv
 from scrapers import aa_scraper
 from create_db import *
+from scrapers import tweet_scrap
 import os
 
 load_dotenv()
@@ -180,7 +181,11 @@ def refresh_news():
 
 @app.route('/refresh_tweets', methods=['GET'])
 def refresh_tweets():
-    print("Not implemented yet")
+    print("refresh tweet boop")
+    tweet_scrap.scrape_tweets()
+    tweet_scrap.read_and_save()
+    df = tweet_scrap.get_tweets()
+    save_to_db(df, 'tweets') 
     return redirect(url_for('tweets'))
 
 if __name__ == '__main__':
