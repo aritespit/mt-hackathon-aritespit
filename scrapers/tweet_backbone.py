@@ -21,6 +21,9 @@ from selenium.webdriver.chrome.service import Service as ChromeService
 
 from webdriver_manager.chrome import ChromeDriverManager
 class Progress:
+    """
+    Class to display progress bar for scraping tweets.
+    """
     def __init__(self, current, total) -> None:
         self.current = current
         self.total = total
@@ -44,6 +47,9 @@ class Progress:
         sys.stdout.flush()
 
 class Scroller:
+    """
+    Class to handle scrolling of the page to load more content.
+    """
     def __init__(self, driver) -> None:
         self.driver = driver
         self.current_position = 0
@@ -71,6 +77,9 @@ class Scroller:
         pass
 
 class Tweet:
+    """
+    Class to scrape tweet details. Handles the extraction of tweet details and the creation of a tweet object and logging into twitter.
+    """
     def __init__(
         self,
         card: WebDriver,
@@ -88,7 +97,11 @@ class Tweet:
         self.username_new=user
         self.old_timestamp=old_timestamp
 
+        try:
+            self.image = card.find_element("xpath", './/div[@data-testid="tweetPhoto"]//img').get_attribute("src")
 
+        except NoSuchElementException:
+            self.image=""
 
         try:
             self.user = card.find_element(
@@ -117,7 +130,6 @@ class Tweet:
             self.is_ad = True
             self.error = True
             self.date_time = "skip"
-        print("TIMEEE**********************", self.old_timestamp, self.date_time)
         if self.old_timestamp==self.date_time:
             self.finish=True
 
@@ -359,12 +371,16 @@ class Tweet:
             self.user_id,
             self.following_cnt,
             self.followers_cnt,
+            self.image
         )
 
         pass
 TWITTER_LOGIN_URL = "https://twitter.com/i/flow/login"
 
 class Twitter_Scraper:
+    """
+    Class that handles the scraping of tweets from Twitter. Handles the configuration of the scraper and the scraping of tweets.
+    """
     def __init__(
         self,
         username,
@@ -825,7 +841,6 @@ It may be due to the following:
                     print(f"Error scraping tweets: {e}")
                     break
 
-            print("")
 
             if len(self.data) >= self.max_tweets:
                 print("Scraping Complete")
@@ -858,6 +873,7 @@ It may be due to the following:
                 "Profile Image": [tweet[12] for tweet in self.data],
                 "Tweet Link": [tweet[13] for tweet in self.data],
                 "Tweet ID": [f'tweet_id:{tweet[14]}' for tweet in self.data],
+                "Photo Link": [f'{tweet[18]}' for tweet in self.data]
             }
 
             if self.scraper_details["poster_details"]:

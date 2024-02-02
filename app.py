@@ -23,6 +23,9 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
 class Tweet(db.Model):
+    """
+    Class that represents the tweets table in the database.
+    """
     __tablename__ = 'tweets'
     index = db.Column(db.Integer, primary_key=True)
     Name = db.Column(db.String(255))
@@ -35,6 +38,9 @@ class Tweet(db.Model):
     
     
 class News(db.Model):
+    """
+    Class that represents the news table in the database.
+    """
     __tablename__ = 'news'
     index = db.Column(db.Integer, primary_key=True)
     Link = db.Column(db.Text)
@@ -49,11 +55,19 @@ def home():
 # creating news from tweets
 @app.route('/tweets', methods=['GET', 'POST'])
 def tweets():
+    """
+    App route for the news page. Loads the news from the database and displays them, and allows the user to generate a summary for a news article. 
+    Additionally allows the user to refresh the news articles and generate a new summary with user feedback.
+    """
     # print(index)
     llm = OpenAI(model_name="gpt-3.5-turbo-instruct", api_key="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", temperature=0.1)
     entries = Tweet.query.all()
     summary = None
     index = None
+    with open('scrapers/twitter_handles.txt', 'r') as f:
+        accounts = [line.strip() for line in f.readlines() if line.strip()]
+        if accounts == []:
+            accounts = None
     if request.method == 'POST':
         person = request.form.get('name')
         text = request.form.get('text')
@@ -61,11 +75,11 @@ def tweets():
         generated_news = request.form.get('generated_news')
         display_no = request.form.get('display_no')
         feedback = request.form.get('feedback')
+        accounts = request.form.get('accounts')
         if index:
             print(index)
         else:
             print(display_no)
-        
         if generated_news:
             # Find the tweet based on the content
             tweet_to_update = Tweet.query.filter_by(index=index).first()
@@ -94,7 +108,13 @@ def tweets():
             response = llm_chain.generate([{"text": text, "feedback": feedback}])
             summary = response.generations[0][0].text
             print(text)
-            
+        elif accounts or accounts == "":
+            print(f'before: {accounts}')
+            accounts = [account.strip() for account in accounts.split('\n') if account.strip()]
+            print(f'after: {accounts}')
+            with open('scrapers/twitter_handles.txt', 'w') as f:
+                f.write('\n'.join(accounts))
+        
         elif display_no:
             tweet_to_display = Tweet.query.filter_by(index=display_no).first()
             summary = tweet_to_display.news   
@@ -120,18 +140,18 @@ def tweets():
             summary = response.generations[0][0].text
     
     try:
-        return render_template('tweets.html', entries=entries, summary=summary, index=index, display_no=display_no)
-
+        return render_template('tweets.html', entries=entries, summary=summary, index=index, display_no=display_no, accounts=accounts)
     except:
         index = None  # You can set a default value for index
         display_no = None  # You can set a default value for display_no
 
-        return render_template('tweets.html', entries=entries, summary=summary, index=index, display_no=display_no)
+        return render_template('tweets.html', entries=entries, summary=summary, index=index, display_no=display_no, accounts=accounts)
 
 
 # creating tweets from news
 @app.route('/news', methods=['GET','POST'])
 def news():
+
     llm = OpenAI(model_name="gpt-3.5-turbo-instruct", api_key="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", temperature=0.1)
     index=None
     summary = None
@@ -156,6 +176,7 @@ def news():
 
             ### Instruction:
             Create three bulletpoints that summarize the important parts of the news article.
+            You should spread the W-H questions (What, When, Where, Who, Why, How) in the bulletpoints.
             Do it as thoroughly and detailed as you can while keeping the bulletpoints short.
             Always reply in Turkish; if your answer is not in Turkish, translate it.
             Keep the bulletpoints short.
@@ -176,12 +197,18 @@ def news():
 
 @app.route('/refresh_news', methods=['GET'])
 def refresh_news():
+    """
+    Function that refreshes the news articles by scraping the Anadolu Ajansi website and saving them to the database.
+    """
     df = aa_scraper.scrape()
     save_to_db(df, 'news') 
     return redirect(url_for('news'))
 
 @app.route('/refresh_tweets', methods=['GET'])
 def refresh_tweets():
+    """
+    Function that refreshes the tweets by scraping Twitter and saving them to the database.
+    """
     print("refresh tweet boop")
     tweet_scrap.scrape_tweets()
     tweet_scrap.read_and_save()

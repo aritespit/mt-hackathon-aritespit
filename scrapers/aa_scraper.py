@@ -89,21 +89,22 @@ def get_article_contents() -> list:
     links = pd.read_csv('data/links.csv')['Links'].tolist()
 
     data = []
-
+    # scrape the content of each article
     for link in links:
         user_agent = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3'}
         response = requests.get(link, headers=user_agent, timeout=15)
         
         soup = BeautifulSoup(response.text, 'html.parser')
+        # find the div containing the article content
         detay_icerik_div = soup.find('div', class_='detay-icerik')
         detay_icerik_texts = detay_icerik_div.find_all(text=True)
-        # clean the texts
+        # clean the texts and join them
         detay_icerik_texts = [text.strip() for text in detay_icerik_texts if text.strip() != '']
         detay_icerik_texts = [text for text in detay_icerik_texts if 'svg' not in text]
         detay_icerik_texts = [text for text in detay_icerik_texts if 'Bu haberi paylaşın' not in text]
         detay_icerik_texts = " ".join(detay_icerik_texts)
         
-        # Remove the content after the specified string
+        # remove the content after the specified string
         end_index = detay_icerik_texts.find('Anadolu Ajansı web sitesinde, AA Haber Akış Sistemi (HAS) üzerinden abonelere sunulan haberler, özetlenerek yayımlanmaktadır.')
         if end_index != -1:
             detay_icerik_texts = detay_icerik_texts[:end_index]
@@ -125,6 +126,9 @@ def save_data(data):
     df.to_csv(csv_file_path, index=False)
     
 def scrape():
+    """
+    Main function to scrape the AA news website.
+    """
     expanded_page_content = selenium_driver()
     get_urls(expanded_page_content)
     data = get_article_contents()

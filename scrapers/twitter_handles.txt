@@ -40,3 +40,4 @@
 @TCSanayi
 @ticaret
 @Merkez_Bankasi
+@rterdogan

@@ -7,6 +7,9 @@ sys.path.append(main_path)
 from scrapers.tweet_backbone import Twitter_Scraper
 
 def scrape_tweets():
+    """
+    Main function to scrape tweets from Twitter. Logs into Twitter, scrapes tweets, and saves them to a CSV file.
+    """
     USER_UNAME = "aritespit" 
     USER_PASSWORD = "AnadoluArilari" 
 
@@ -33,6 +36,9 @@ def scrape_tweets():
     scraper.temp_driver.close()
 
 def read_and_save():
+    """
+    Function that reads the scraped tweets and saves them to into a single CSV file.
+    """
     folder_path = 'tweets/' if os.path.isdir('tweets/') else 'twitter_scraper/tweets/'
     folder_name = os.listdir(folder_path)
 
@@ -51,6 +57,9 @@ def read_and_save():
     combined_dataset.to_csv('data/combined_tweets.csv', index=False)
 
 def get_tweets():
+    """
+    Function that reads the combined tweets from the CSV file.
+    """
     return pd.read_csv('data/combined_tweets.csv')
 
 
