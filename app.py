@@ -47,10 +47,11 @@ def home():
 # creating news from tweets
 @app.route('/tweets', methods=['GET', 'POST'])
 def tweets():
+    # print(index)
     llm = OpenAI(model_name="gpt-3.5-turbo-instruct", api_key="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", temperature=0.1)
     entries = Tweet.query.all()
     summary = None
-    index=None
+    index = None
     if request.method == 'POST':
         person = request.form.get('name')
         text = request.form.get('text')
@@ -58,6 +59,11 @@ def tweets():
         generated_news = request.form.get('generated_news')
         display_no = request.form.get('display_no')
         feedback = request.form.get('feedback')
+        if index:
+            print(index)
+        else:
+            print(display_no)
+        
         if generated_news:
             # Find the tweet based on the content
             tweet_to_update = Tweet.query.filter_by(index=index).first()
@@ -66,13 +72,8 @@ def tweets():
                 tweet_to_update.news = generated_news
                 tweet_to_update.is_generated = 1
                 db.session.commit()
-        elif display_no:
-            print(display_no)
-            tweet_to_display = Tweet.query.filter_by(index=display_no).first()
-            print(tweet_to_display)
-            summary = tweet_to_display.news   
         elif feedback:
-            print(index)
+            
             template="""
             You are a news assistant that turns the posts published by institutions, organizations or ministers on their social media accounts into news.
             There is a feedback given you for you to correct given text.
@@ -83,13 +84,18 @@ def tweets():
             Now text is : {text}
             Now feedback is: {feedback}
             """
-            tweet_to_adjust = Tweet.query.filter_by(index=index).first()
+            
+            tweet_to_adjust = Tweet.query.filter_by(index=display_no).first()
             text=tweet_to_adjust.news
             prompt = PromptTemplate(input_variables=["text","feedback"], template=template)
             llm_chain = LLMChain(llm=llm, prompt=prompt)
             response = llm_chain.generate([{"text": text, "feedback": feedback}])
-            print(response)
             summary = response.generations[0][0].text
+            print(text)
+            
+        elif display_no:
+            tweet_to_display = Tweet.query.filter_by(index=display_no).first()
+            summary = tweet_to_display.news   
         elif text:
             template = """
             You are a news assistant that turns the posts published by institutions, organizations or ministers on their social media accounts into news. 
@@ -109,10 +115,17 @@ def tweets():
             prompt = PromptTemplate(input_variables=["text"], template=template)
             llm_chain = LLMChain(llm=llm, prompt=prompt)
             response = llm_chain.generate([{"text": text}])
-            print(response)
             summary = response.generations[0][0].text
+    
+    try:
+        return render_template('tweets.html', entries=entries, summary=summary, index=index, display_no=display_no)
 
-    return render_template('tweets.html', entries=entries, summary=summary,index=index)
+    except:
+        index = None  # You can set a default value for index
+        display_no = None  # You can set a default value for display_no
+
+        return render_template('tweets.html', entries=entries, summary=summary, index=index, display_no=display_no)
+
 
 # creating tweets from news
 @app.route('/news', methods=['GET','POST'])
@@ -129,7 +142,6 @@ def news():
         if generated_summary:
             # Find the tweet based on the content
             summary_to_update = News.query.filter_by(index=index).first()
-            print(summary_to_update)
             if summary_to_update:
                 summary_to_update.summary = generated_summary
                 db.session.commit()

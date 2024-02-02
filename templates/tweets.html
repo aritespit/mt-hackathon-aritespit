@@ -39,6 +39,7 @@ Twitler
 							
                         </form>
 						<form action="/tweets" method="POST">
+
 							{% if entry.is_generated %}
 								<input type="hidden" name="display_no" value="{{ entry.index }}" />
 								<button style="font-size: 10px;padding: 3px 12px;" type="submit" class="btn btn-primary">Haberi Görüntüle</button>
@@ -64,6 +65,7 @@ Twitler
         <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#myModal">Komut Gir</button>
     </form>
     {% endif %}
+		
 </div>
 <!--Modal-->
 <div class="modal" id="myModal">
@@ -84,7 +86,7 @@ Twitler
 
             <!-- Modal Footer -->
             <div class="modal-footer">
-				<input type="hidden" name="index" value="{{ index }}">
+				<input type="hidden" name="display_no" value="{{ display_no }}">
                 <button type="submit" class="btn btn-primary" id="submitModal">Gönder</button>
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Kapat</button>
             </div>
