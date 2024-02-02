@@ -43,6 +43,7 @@ Install dependencies
 Start the app
 
 ```bash
+  python create_db.py 
   python app.py
 ```
 
