@@ -842,7 +842,7 @@ It may be due to the following:
                     print(f"Error scraping tweets: {e}")
                     break
 
-            print("")
+            
 
             if len(self.data) >= self.max_tweets:
                 print("Scraping Complete")
