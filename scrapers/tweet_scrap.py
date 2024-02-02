@@ -1,6 +1,11 @@
-from scrapers.tweet_backbone import Twitter_Scraper
+import sys
 import os
 import pandas as pd
+# adding the main path to the sys path, else the import will not work
+main_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+sys.path.append(main_path)
+from scrapers.tweet_backbone import Twitter_Scraper
+
 def scrape_tweets():
     USER_UNAME = "aritespit" 
     USER_PASSWORD = "AnadoluArilari" 
