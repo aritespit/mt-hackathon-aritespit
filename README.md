@@ -1,8 +1,8 @@
-![Logo](![Vq3qKv4-removebg-preview (1)](https://github.com/aritespit/aritespit/assets/64483224/0ab01a40-0851-43cc-bb61-2523434e7056)
+(![Vq3qKv4-removebg-preview (1)](https://github.com/aritespit/aritespit/assets/64483224/0ab01a40-0851-43cc-bb61-2523434e7056)
 )
 
 
-# Project Title
+# Yeni Medya Çağında İçerik Keşfi ve Dinamik Haberleştirme
 
 A brief description of what this project does and who it's for
 
