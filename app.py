@@ -31,6 +31,7 @@ class Tweet(db.Model):
     Content = db.Column(db.Text)
     is_generated = db.Column(db.Boolean)
     news = db.Column(db.Text)
+    photo_link = db.Column(db.Text)
     
     
 class News(db.Model):

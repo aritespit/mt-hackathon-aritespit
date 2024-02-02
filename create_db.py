@@ -46,7 +46,7 @@ def save_to_db(df, table_name):
         engine = create_engine(f'mysql+mysqlconnector://{db_user}:{db_password}@{db_host}:{db_port}/{db_database}')           
         # add additional columns
         if table_name == "tweets":
-            additional_columns = {'is_generated': 0, 'news': ""}
+            additional_columns = {'is_generated': 0, 'news': "",'photo_link':None}
         else:
             additional_columns = {'summary': ""}
         df = df.assign(**additional_columns)
