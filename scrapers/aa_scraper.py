@@ -12,7 +12,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
 
-def selenium_driver(scroll_count=10):
+def selenium_driver(scroll_count=5):
     """Creates a selenium driver in headless mode and scrolls down the page to load more content.
 
     Args:
