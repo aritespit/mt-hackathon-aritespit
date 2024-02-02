@@ -63,6 +63,10 @@ def tweets():
     entries = Tweet.query.all()
     summary = None
     index = None
+    with open('scrapers/twitter_handles.txt', 'r') as f:
+        accounts = [line.strip() for line in f.readlines() if line.strip()]
+        if accounts == []:
+            accounts = None
     if request.method == 'POST':
         person = request.form.get('name')
         text = request.form.get('text')
@@ -70,11 +74,11 @@ def tweets():
         generated_news = request.form.get('generated_news')
         display_no = request.form.get('display_no')
         feedback = request.form.get('feedback')
+        accounts = request.form.get('accounts')
         if index:
             print(index)
         else:
             print(display_no)
-        
         if generated_news:
             # Find the tweet based on the content
             tweet_to_update = Tweet.query.filter_by(index=index).first()
@@ -103,7 +107,13 @@ def tweets():
             response = llm_chain.generate([{"text": text, "feedback": feedback}])
             summary = response.generations[0][0].text
             print(text)
-            
+        elif accounts or accounts == "":
+            print(f'before: {accounts}')
+            accounts = [account.strip() for account in accounts.split('\n') if account.strip()]
+            print(f'after: {accounts}')
+            with open('scrapers/twitter_handles.txt', 'w') as f:
+                f.write('\n'.join(accounts))
+        
         elif display_no:
             tweet_to_display = Tweet.query.filter_by(index=display_no).first()
             summary = tweet_to_display.news   
@@ -129,13 +139,12 @@ def tweets():
             summary = response.generations[0][0].text
     
     try:
-        return render_template('tweets.html', entries=entries, summary=summary, index=index, display_no=display_no)
-
+        return render_template('tweets.html', entries=entries, summary=summary, index=index, display_no=display_no, accounts=accounts)
     except:
         index = None  # You can set a default value for index
         display_no = None  # You can set a default value for display_no
 
-        return render_template('tweets.html', entries=entries, summary=summary, index=index, display_no=display_no)
+        return render_template('tweets.html', entries=entries, summary=summary, index=index, display_no=display_no, accounts=accounts)
 
 
 # creating tweets from news
