@@ -97,7 +97,11 @@ class Tweet:
         self.username_new=user
         self.old_timestamp=old_timestamp
 
+        try:
+            self.image = card.find_element("xpath", './/div[@data-testid="tweetPhoto"]//img').get_attribute("src")
 
+        except NoSuchElementException:
+            self.image=""
 
         try:
             self.user = card.find_element(
@@ -368,6 +372,7 @@ class Tweet:
             self.user_id,
             self.following_cnt,
             self.followers_cnt,
+            self.image
         )
 
         pass
@@ -870,6 +875,7 @@ It may be due to the following:
                 "Profile Image": [tweet[12] for tweet in self.data],
                 "Tweet Link": [tweet[13] for tweet in self.data],
                 "Tweet ID": [f'tweet_id:{tweet[14]}' for tweet in self.data],
+                "Photo Link": [f'{tweet[18]}' for tweet in self.data]
             }
 
             if self.scraper_details["poster_details"]:
