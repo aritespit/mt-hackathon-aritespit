@@ -3,8 +3,7 @@
 
 
 # Yeni Medya Çağında İçerik Keşfi ve Dinamik Haberleştirme
-
-A brief description of what this project does and who it's for
+New media has become one of the most important resources for media organizations today. As the ArıTespit team, we have developed an artificial intelligence-supported project that allows instant content monitoring and reporting of accounts determined by journalists in the new media. Our project also facilitates the work of journalists by converting news texts into new media content.
 
 
 ## Run Locally
