@@ -2,7 +2,7 @@ import os
 import mysql.connector
 from dotenv import load_dotenv
 import pandas as pd
-from sqlalchemy import create_engine, inspect
+from sqlalchemy import create_engine, inspect, text
 import sqlalchemy
 
 def get_credentials():
@@ -53,7 +53,8 @@ def save_to_db(df, table_name):
         # remove duplicates
         if sqlalchemy.inspect(engine).has_table(table_name):
             print("inner loop boop")
-            existing_records = pd.read_sql(f'SELECT DISTINCT Content FROM {table_name}', con=engine)
+            query = text(f'SELECT DISTINCT Content FROM {table_name}')
+            existing_records = pd.read_sql_query(query, con=engine.connect())
             df = df[~df['Content'].isin(existing_records['Content'])]
             print(len(df))
         # save to db
@@ -73,6 +74,6 @@ def save_to_db(df, table_name):
 if __name__ == '__main__':
     create_db()
     df_news = pd.read_csv('data/aa_news.csv')
-    df_tweets = pd.read_csv('data/combined_dataset.csv')
+    df_tweets = pd.read_csv('data/combined_tweets.csv')
     save_to_db(df_news, 'news')
     save_to_db(df_tweets, 'tweets')
