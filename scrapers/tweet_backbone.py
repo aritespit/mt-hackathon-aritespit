@@ -21,6 +21,9 @@ from selenium.webdriver.chrome.service import Service as ChromeService
 
 from webdriver_manager.chrome import ChromeDriverManager
 class Progress:
+    """
+    Class to display progress bar for scraping tweets.
+    """
     def __init__(self, current, total) -> None:
         self.current = current
         self.total = total
@@ -44,6 +47,9 @@ class Progress:
         sys.stdout.flush()
 
 class Scroller:
+    """
+    Class to handle scrolling of the page to load more content.
+    """
     def __init__(self, driver) -> None:
         self.driver = driver
         self.current_position = 0
@@ -71,6 +77,9 @@ class Scroller:
         pass
 
 class Tweet:
+    """
+    Class to scrape tweet details. Handles the extraction of tweet details and the creation of a tweet object and logging into twitter.
+    """
     def __init__(
         self,
         card: WebDriver,
@@ -365,6 +374,9 @@ class Tweet:
 TWITTER_LOGIN_URL = "https://twitter.com/i/flow/login"
 
 class Twitter_Scraper:
+    """
+    Class that handles the scraping of tweets from Twitter. Handles the configuration of the scraper and the scraping of tweets.
+    """
     def __init__(
         self,
         username,

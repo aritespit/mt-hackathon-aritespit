@@ -23,6 +23,9 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
 class Tweet(db.Model):
+    """
+    Class that represents the tweets table in the database.
+    """
     __tablename__ = 'tweets'
     index = db.Column(db.Integer, primary_key=True)
     Name = db.Column(db.String(255))
@@ -34,6 +37,9 @@ class Tweet(db.Model):
     
     
 class News(db.Model):
+    """
+    Class that represents the news table in the database.
+    """
     __tablename__ = 'news'
     index = db.Column(db.Integer, primary_key=True)
     Link = db.Column(db.Text)
@@ -48,6 +54,10 @@ def home():
 # creating news from tweets
 @app.route('/tweets', methods=['GET', 'POST'])
 def tweets():
+    """
+    App route for the news page. Loads the news from the database and displays them, and allows the user to generate a summary for a news article. 
+    Additionally allows the user to refresh the news articles and generate a new summary with user feedback.
+    """
     # print(index)
     llm = OpenAI(model_name="gpt-3.5-turbo-instruct", api_key="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", temperature=0.1)
     entries = Tweet.query.all()
@@ -131,6 +141,7 @@ def tweets():
 # creating tweets from news
 @app.route('/news', methods=['GET','POST'])
 def news():
+
     llm = OpenAI(model_name="gpt-3.5-turbo-instruct", api_key="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", temperature=0.1)
     index=None
     summary = None
@@ -155,6 +166,7 @@ def news():
 
             ### Instruction:
             Create three bulletpoints that summarize the important parts of the news article.
+            You should spread the W-H questions (What, When, Where, Who, Why, How) in the bulletpoints.
             Do it as thoroughly and detailed as you can while keeping the bulletpoints short.
             Always reply in Turkish; if your answer is not in Turkish, translate it.
             Keep the bulletpoints short.
@@ -175,12 +187,18 @@ def news():
 
 @app.route('/refresh_news', methods=['GET'])
 def refresh_news():
+    """
+    Function that refreshes the news articles by scraping the Anadolu Ajansi website and saving them to the database.
+    """
     df = aa_scraper.scrape()
     save_to_db(df, 'news') 
     return redirect(url_for('news'))
 
 @app.route('/refresh_tweets', methods=['GET'])
 def refresh_tweets():
+    """
+    Function that refreshes the tweets by scraping Twitter and saving them to the database.
+    """
     print("refresh tweet boop")
     tweet_scrap.scrape_tweets()
     tweet_scrap.read_and_save()

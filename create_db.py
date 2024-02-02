@@ -6,6 +6,9 @@ from sqlalchemy import create_engine, inspect, text
 import sqlalchemy
 
 def get_credentials():
+    """
+    Function to get the database credentials from the .env file.
+    """
     load_dotenv()
 
     db_host = os.getenv("DB_HOST")
@@ -17,6 +20,9 @@ def get_credentials():
     return db_host, db_port, db_user, db_password, db_database
 
 def create_db():
+    """
+    Function that creates the database if it does not exist.
+    """
     db_host, db_port, db_user, db_password, db_database = get_credentials()
 
     try:
@@ -39,6 +45,12 @@ def create_db():
         print(f"Error: {err}")
 
 def save_to_db(df, table_name):
+    """
+    Function that saves the DataFrame to the specified table in the database. Handles duplicates and adds additional columns.
+    Args:
+        df (DataFrame): the DataFrame to save
+        table_name (str): the name of the table to save the DataFrame to
+    """
     # get credentials
     db_host, db_port, db_user, db_password, db_database = get_credentials()
 
