@@ -51,7 +51,7 @@ def read_and_save():
             datasets.append(df)
 
     combined_dataset = pd.concat(datasets)
-    columns_to_keep = ['index', 'Name', 'Handle', 'Timestamp', 'Content']
+    columns_to_keep = ['index', 'Name', 'Handle', 'Timestamp', 'Content', 'photo_link']
     columns_to_drop = [col for col in combined_dataset.columns if col not in columns_to_keep]
     combined_dataset.drop(columns=columns_to_drop, inplace=True)
     combined_dataset.to_csv('data/combined_tweets.csv', index=False)
@@ -64,5 +64,5 @@ def get_tweets():
 
 
 if __name__ == "__main__":
-    scrape_tweets()
+    #scrape_tweets()
     read_and_save()
