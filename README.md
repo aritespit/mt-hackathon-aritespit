@@ -20,11 +20,6 @@ Go to the project directory
   cd aritespit
 ```
 
-Install dependencies
-
-```bash
-  pip install -r requirements.txt
-```
 
 Enter your environmental variables for MySQL connection in ".env" file:
 
@@ -39,10 +34,14 @@ Install dependencies
   pip install -r requirements.txt
 ```
 
+Execute the script to create the database
+```bash
+  python create_db.py 
+```
+
 Start the app
 
 ```bash
-  python create_db.py 
   python app.py
 ```
 
