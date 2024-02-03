@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 import pandas as pd
 from sqlalchemy import create_engine, inspect, text
 import sqlalchemy
-
+import time
 def get_credentials():
     """
     Function to get the database credentials from the .env file.
@@ -76,12 +76,18 @@ def save_to_db(df, table_name):
             df.to_sql(table_name, con=engine, if_exists='append', index=True)
 
             engine.dispose()
+            # last fetched time to show it on frontend
+            last_fetched_time = time.strftime('%Y-%m-%d %H:%M:%S')
+            with open(f'data/last_fetched_time_{table_name}.txt', 'w') as file:
+                file.write(last_fetched_time)
+                print(last_fetched_time)
 
             print(f"DataFrame saved to '{table_name}'.")
         else:
             print("No new records to save.")
     except Exception as e:
         print(f"An error occurred: {e}")
+
 
 
 if __name__ == '__main__':

@@ -8,6 +8,7 @@ from create_db import *
 from scrapers import tweet_scrap
 import os
 from openai import OpenAI
+import random
 
 load_dotenv()
 
@@ -16,8 +17,7 @@ db_port = os.getenv("DB_PORT")
 db_user = os.getenv("DB_USER")
 db_password = os.getenv("DB_PASSWORD")
 db_database = os.getenv("DB_DATABASE")
-
-app = Flask(__name__)
+app = Flask(__name__, static_url_path='/static')
 app.config['SQLALCHEMY_DATABASE_URI'] = f'mysql+mysqlconnector://{db_user}:{db_password}@{db_host}:{db_port}/{db_database}'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False  
 db = SQLAlchemy(app)
@@ -52,7 +52,11 @@ class News(db.Model):
 def home():
     tweets = Tweet.query.all()
     news = News.query.all()
-    return render_template('index.html', tweets=len(tweets), news=len(news))
+    with open('data/last_fetched_time_news.txt', 'r') as f:
+        last_fetched_time_news = f.read()
+    with open('data/last_fetched_time_tweets.txt', 'r') as f:
+        last_fetched_time_tweets = f.read()
+    return render_template('index.html', tweets=len(tweets), news=len(news), news_time=last_fetched_time_news, tweets_time=last_fetched_time_tweets)
 
 # creating news from tweets
 @app.route('/tweets', methods=['GET', 'POST'])
@@ -106,7 +110,11 @@ def tweets():
 
 
             template=[{"role":"system", 
-                        "content":f"""Given the following news article text, extract and list the most relevant keywords. Focus on identifying terms that are significant to the content's overall meaning, including any notable names, places,subjects in the sentences. Please provide the keywords in a bullet-point format for clarity. Keywords shouldn't be action verbs. Show top 5 keywordss.."""},
+                        "content":f"""Given the following news article text, extract and list the most relevant keywords. 
+                        Focus on identifying terms that are significant to the content's overall meaning, including any notable names, places, subjects in the sentences. Keywords should be about
+                        the news, it should be about the main topic of the news.
+                        Do not make up stuff and do not provide meaningless words additionally provide the keywords in a bullet-point format for clarity. 
+                        Keywords shouldn't be action verbs. Show top 5 keywordss.."""},
                         {"role":"user",
                         "content": text}]
             
@@ -192,7 +200,28 @@ def tweets():
             presence_penalty=0
             )
             summary = response.choices[0].message.content
+            mahrec = "(AA)"
 
+            second = [#"X sosyal medya hesabından yaptığı paylaşımda şunları kaydetti:",
+                    # "X sosyal medya hesabından yaptığı paylaşımda aşağıdaki ifadeleri kullandı:",
+                    # "X sosyal medya platformunda paylaştığı gönderide şu sözleri yazdı:",
+                    "X sosyal medya hesabından habere ilişkin paylaşım yapıldı.",
+                    "X sosyal medya hesabından paylaşımda bulundu."]
+
+            paragraphs = summary.split('\n\n')
+
+            first_paragraph = paragraphs[1] if paragraphs else ''
+
+            random_second = random.choice(second)
+
+            random_second = person + ", " + random_second
+
+            result = f"\n\n {mahrec} - {first_paragraph} \n\n {random_second}"
+
+            title = paragraphs[0] if paragraphs else ''
+            last_paragraph = paragraphs[-1] if paragraphs else ''
+
+            summary = title + result + "\n\n" + last_paragraph
     
     try:
         return render_template('tweets.html', entries=entries, summary=summary, index=index, display_no=display_no, accounts=accounts)
