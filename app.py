@@ -68,7 +68,6 @@ def tweets():
     index = None
     with open('scrapers/twitter_handles.txt', 'r') as f:
         accounts = [line.strip() for line in f.readlines() if line.strip()]
- 
     if request.method == 'POST':
         person = request.form.get('name')
         text = request.form.get('text')
@@ -82,7 +81,7 @@ def tweets():
             print(index)
         else:
             print(f'display no {display_no}')
-        
+
             
         if accounts or accounts == "":
             print(f'before: {accounts}')
@@ -101,24 +100,30 @@ def tweets():
                 db.session.commit()
 
         elif etiket_no:
-            print(etiket_no)
-            template = """
-            Given the following news article text, extract and list the most relevant keywords. Focus on identifying terms that are significant to the content's overall meaning, including any notable names, places,subjects in the sentences. Please provide the keywords in a bullet-point format for clarity.
-
-            ---
-
-            Your text is "{text}"
-
-            ---
-            Remove VERB in results. Limit 10.
-            """
-            
+            print(f'Etiket no: {etiket_no}')
             tweet_to_adjust = Tweet.query.filter_by(index=etiket_no).first()
             text=tweet_to_adjust.news
-            prompt = PromptTemplate(input_variables=["text"], template=template)
-            llm_chain = LLMChain(llm=llm, prompt=prompt)
-            response = llm_chain.generate([{"text": text}])
-            summary = response.generations[0][0].text
+
+
+            template=[{"role":"system", 
+                        "content":f"""Given the following news article text, extract and list the most relevant keywords. Focus on identifying terms that are significant to the content's overall meaning, including any notable names, places,subjects in the sentences. Please provide the keywords in a bullet-point format for clarity. Keywords shouldn't be action verbs. Show top 5 keywordss.."""},
+                        {"role":"user",
+                        "content": text}]
+            
+            response = client.chat.completions.create(
+            model="gpt-3.5-turbo",
+            messages=template,
+            temperature=0,
+            max_tokens=554,
+            top_p=1,
+            frequency_penalty=0,
+            presence_penalty=0
+            )
+
+
+            summary =  response.choices[0].message.content
+
+
         elif feedback:
             tweet_to_adjust = Tweet.query.filter_by(index=display_no).first()
             print(tweet_to_adjust)
@@ -143,7 +148,6 @@ def tweets():
 
 
             summary =  response.choices[0].message.content
-
 
         elif display_no:
             tweet_to_display = Tweet.query.filter_by(index=display_no).first()
