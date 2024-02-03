@@ -23,7 +23,7 @@ Twitler
             </thead>
             <tbody>
                 {% for entry in entries %}
-                <tr {% if entry.is_generated %}style="background-color: #c3e6cb;"{% else %}style="background-color: #ffff9f;"{% endif %}>
+                <tr {% if entry.is_generated %}style="background-color: #89BD9E;"{% else %}style="background-color: #FCBF49;"{% endif %}>
                     <td class="scrollable-cell">{{ entry.index }}</td>
                     <!-- <td class="scrollable-cell">{{ entry.Name }}</td> -->
                     <td class="scrollable-cell">{{ entry.Handle }}</td>
@@ -36,21 +36,21 @@ Twitler
                             <input type="hidden" name="name" value="{{ entry.Name }}" />
                             <input type="hidden" name="text" value="{{ entry.Content }}" />
                             <input type="hidden" name="index" value="{{ entry.index }}" />
-                            <button type="submit" class="btn btn-primary">Haberleştir</button>
+                            <button type="submit" class="btn btn-light">Haberleştir</button>
 							
                         </form>
 						<form action="/tweets" method="POST">
 							{% if entry.is_generated %}
 								<input type="hidden" name="display_no" value="{{ entry.index }}" />
-								<button style="font-size: 10px; padding: 3px 12px;" type="submit" class="btn btn-primary">Haberi Görüntüle</button>
+								<button style="font-size: 10px; padding: 3px 12px;" type="submit" class="btn btn-dark">Haberi Görüntüle</button>
 							{% endif %}
 
 						</form>
-						<a href="https://twitter.com/username/status/{{entry.tweet_id}}" class="btn btn-primary" target="_blank">Tweet'i Görüntüle</a>
+						<a style="font-size: 10px; padding: 3px 6px;" href="https://twitter.com/username/status/{{entry.tweet_id}}" class="btn btn-dark" target="_blank">Tweet'i Görüntüle</a>
 
                         {% if entry.photo_link %}
 							<input type="hidden" name="display_no" value="{{ entry.index }}" />
-                            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#photoModal{{ entry.index }}">
+                            <button style="font-size: 10px; padding: 3px 6px;margin: auto;" type="button" class="btn btn-outline-light" data-toggle="modal" data-target="#photoModal{{ entry.index }}">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-card-image" viewBox="0 0 16 16">
                                     <path d="M6.002 5.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0"/>
                                     <path d="M1.5 2A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h13a1.5 1.5 0 0 0 1.5-1.5v-9A1.5 1.5 0 0 0 14.5 2zm13 1a.5.5 0 0 1 .5.5v6l-3.775-1.947a.5.5 0 0 0-.577.093l-3.71 3.71-2.66-1.772a.5.5 0 0 0-.63.062L1.002 12v.54L1 12.5v-9a.5.5 0 0 1 .5-.5z"/>
@@ -90,7 +90,7 @@ Twitler
     <form action="/tweets" method="POST">
         <textarea name="generated_news" class="form-control" style="height: 450px;">{{ summary }}</textarea>
         <input type="hidden" name="index" value="{{ index }}">
-        <input type="submit" value="Haberi Gönder" class="btn btn-primary">
+        <input type="submit" value="Haberi Gönder" class="btn btn-success">
         <!-- Add a button to trigger the modal -->
         <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#myModal">Komut Gir</button>
     </form>
