@@ -10,7 +10,7 @@ def scrape_tweets():
     """
     Main function to scrape tweets from Twitter. Logs into Twitter, scrapes tweets, and saves them to a CSV file.
     """
-    USER_UNAME = "aritespit" 
+    USER_UNAME = "aritespit2" 
     USER_PASSWORD = "AnadoluArilari" 
 
     scraper = Twitter_Scraper(
