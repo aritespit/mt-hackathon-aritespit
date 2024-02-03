@@ -94,6 +94,10 @@ Twitler
         <!-- Add a button to trigger the modal -->
         <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#myModal">Komut Gir</button>
     </form>
+	<form action="/tweets" method="POST">
+		<input type="hidden" name="etiket_no" value="{{ index }}">
+		<button type="submit" class="btn btn-secondary" >Etiket Çıkart</button>
+	</form>	
     {% endif %}
 		
 </div>
