@@ -1,6 +1,5 @@
 from flask import Flask, render_template, request, jsonify, redirect, url_for
 from langchain.chains.llm import LLMChain
-from langchain.llms.openai import OpenAI
 from langchain.prompts.prompt import PromptTemplate
 from flask_sqlalchemy import SQLAlchemy
 from dotenv import load_dotenv
@@ -81,7 +80,7 @@ def tweets():
         if index:
             print(index)
         else:
-            print(display_no)
+            print(f'display no {display_no}')
         
             
         if accounts or accounts == "":
@@ -101,28 +100,30 @@ def tweets():
                 db.session.commit()
 
         elif feedback:
-            
-            feedback_prompt=f"""
-            You are a news assistant who turns the posts published by institutions, organizations or ministers on their social media accounts into newsThere is 'feedback' given by user to you to correct the given text. Take this warning into consideration and correct the text by paying attention to Turkish spelling rules."
-            
-            ### Instruction:
-            Replying in Turkish is a MUST, if your answer is going to be english translate it to Turkish
-            
-            Now text is : {text}
-            Now feedback is: {feedback}
-            """
-
             tweet_to_adjust = Tweet.query.filter_by(index=display_no).first()
             print(tweet_to_adjust)
             text=tweet_to_adjust.news
-            response = client.completions.create(
-                model="gpt-3.5-turbo-instruct",
-                max_tokens=500,
-                prompt=feedback_prompt,
-                temperature=0.1
+
+            feedback_sys=[{"role":"system", 
+                        "content":f"""You are a news assistant who turns the posts published by institutions, organizations or ministers on their social media accounts into news. 
+                        Use the feedback given by the user and update the text, do not make up new stuff just apply the giveng feedback to you."""},
+                        {"role":"system",
+                        "content": feedback},
+                        {"role":"user",
+                        "content": text}]
+            response = client.chat.completions.create(
+            model="gpt-3.5-turbo",
+            messages=feedback_sys,
+            temperature=0,
+            max_tokens=554,
+            top_p=1,
+            frequency_penalty=0,
+            presence_penalty=0
             )
-            summary =  response.choices[0].text
-            print(text)
+
+
+            summary =  response.choices[0].message.content
+
 
         elif display_no:
             tweet_to_display = Tweet.query.filter_by(index=display_no).first()
