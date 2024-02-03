@@ -343,7 +343,7 @@ class Tweet:
 
 
             temp_driver.get(self.tweet_link)
-            sleep(4)
+            sleep(10)
             contents = temp_driver.find_elements("xpath",'(.//div[@data-testid="tweetText"])[1]/span | (.//div[@data-testid="tweetText"])[1]/a',
             )
             
