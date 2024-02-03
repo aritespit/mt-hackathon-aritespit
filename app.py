@@ -66,8 +66,7 @@ def tweets():
     index = None
     with open('scrapers/twitter_handles.txt', 'r') as f:
         accounts = [line.strip() for line in f.readlines() if line.strip()]
-        if accounts == []:
-            accounts = None
+ 
     if request.method == 'POST':
         person = request.form.get('name')
         text = request.form.get('text')
@@ -80,6 +79,15 @@ def tweets():
             print(index)
         else:
             print(display_no)
+        
+            
+        if accounts or accounts == "":
+            print(f'before: {accounts}')
+            accounts = [account.strip() for account in accounts.split('\n') if account.strip()]
+            print(f'after: {accounts}')
+            with open('scrapers/twitter_handles.txt', 'w') as f:
+                f.write('\n'.join(accounts))
+        
         if generated_news:
             # Find the tweet based on the content
             tweet_to_update = Tweet.query.filter_by(index=index).first()
@@ -88,6 +96,7 @@ def tweets():
                 tweet_to_update.news = generated_news
                 tweet_to_update.is_generated = 1
                 db.session.commit()
+
         elif feedback:
             
             template="""
@@ -108,13 +117,7 @@ def tweets():
             response = llm_chain.generate([{"text": text, "feedback": feedback}])
             summary = response.generations[0][0].text
             print(text)
-        elif accounts or accounts == "":
-            print(f'before: {accounts}')
-            accounts = [account.strip() for account in accounts.split('\n') if account.strip()]
-            print(f'after: {accounts}')
-            with open('scrapers/twitter_handles.txt', 'w') as f:
-                f.write('\n'.join(accounts))
-        
+
         elif display_no:
             tweet_to_display = Tweet.query.filter_by(index=display_no).first()
             summary = tweet_to_display.news   

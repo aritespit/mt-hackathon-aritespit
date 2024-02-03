@@ -65,5 +65,5 @@ def get_tweets():
 
 
 if __name__ == "__main__":
-    #scrape_tweets()
+    scrape_tweets()
     read_and_save()
