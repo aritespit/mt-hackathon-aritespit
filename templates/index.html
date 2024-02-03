@@ -3,9 +3,42 @@ content %}
 
 <div container>
   <div class="row">
-    <div class="col-md-12">
+    <div class="col-xl">
+      <h1 style="text-align: center;">Hoşgeldiniz</h1>
+      <div style="display: flex; justify-content: center;">
+        <img
+          src="https://github-production-user-asset-6210df.s3.amazonaws.com/64483224/301941029-0ab01a40-0851-43cc-bb61-2523434e7056.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAVCODYLSA53PQK4ZA%2F20240203%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20240203T102612Z&X-Amz-Expires=300&X-Amz-Signature=1e7c3c930ef4ccf71c6e669254b6f297f82482bc14432a6a4c8d223b4af36d5f&X-Amz-SignedHeaders=host&actor_id=54187755&key_id=0&repo_id=750071297"
+          alt="News" style="width: 10%; height: 10%;">
+      </div>
+    </div>
+
+  <div class="row">
+
+    <div class="col-md-4" style=" position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
       <div>
-        <h2 style="text-align: center;">Bilgilendirme</h2>
+        <table class="table">
+          <thead>
+            <tr>
+              <th scope="col">Kaynak</th>
+              <th scope="col">Miktar</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th scope="row">AA</th>
+              <td>{{ news }}</td>
+            </tr>
+            <tr>
+              <th scope="row">X</th>
+              <td>{{ tweets }}</td>
+            </tr>
+          </tbody>
+          <tfoot>
+            <tr>
+              <th scope="row">Toplam</th>
+              <td>{{ news + tweets }}</td>
+            </tr>
+        </table>
       </div>
     </div>
   </div>
