@@ -1,14 +1,35 @@
 from openai import OpenAI
-
 client = OpenAI(api_key="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")
 
-response = client.chat.completions.create(
-  model="gpt-3.5-turbo",
-  messages=[
-    {"role": "system", "content": "You are a helpful assistant."},
-    {"role": "user", "content": "Who won the world series in 2020?"},
-    {"role": "assistant", "content": "The Los Angeles Dodgers won the World Series in 2020."},
-    {"role": "user", "content": "Where was it played?"}
-  ]
-)
-print(response['choices'])
+def news_to_x(news):
+
+  news_to_x=[f"""
+  You are the AI assistant at News Agency to summarize longer news article in an engaging way for use on social media.
+          You need to understand the context and summarize it in an engaging way for use on social media.
+          The abstract should include the important parts of the article, that is, 
+          the parts that contain numerical values or explain the text best, and the summary should consist of a
+          maximum of 180 characters.\n\n
+                ### Instruction:\n\n
+                Add bulletpoints before each sentence.\n
+                Summarize important parts of the news article.\n
+                The summary should include W-H questions (What, When, Where, Who, Why, How).\n
+                Do not make it unnecessary long, it will be posted on social media.\n
+                Make it as comprehensive and detailed as possible, keeping the summary short, 180 characters or less.\n
+                Always answer in Turkish; If your answer is not in Turkish, translate it.\n
+             Input:\n
+             {news}   
+             """]
+
+
+
+  response = client.completions.create(
+    model="gpt-3.5-turbo-instruct",
+    max_tokens=500,
+    prompt=news_to_x
+  )
+  return response.choices[0]
+
+
+news="""Kocaeli Tarım ve Orman Bakanı İbrahim Yumaklı ve Bakan Kacır, Kocaeli Kongre Merkezi'nde düzenlenen "Su Verimliliği Seferberliği: Sanayi-Su Buluşması" programına katıldı. Kacır, burada yaptığı konuşmada, etkinliğin, ülkede endüstriyel su verimliliğinin artırılmasında ve üretim odaklı büyümeyle gelecek nesillere daha rekabetçi, yaşanılabilir bir Türkiye'nin bırakılmasında başlangıç olmasını temenni etti. Savaşlar, ticaret ve teknolojide korumacılık, küresel salgınlar, iklim değişikliği, afetler, gıda, su, enerji ham madde krizlerine rağmen ülkenin "Türkiye Yüzyılı"nda Milli Teknoloji Hamlesi hedeflerine emin adımlarla ilerlediğini belirten Kacır, son 22 yılda kalkınma yolculuğuna çizdikleri yeni istikametle, araştırma ve inovasyon ekosistemi, planlı sanayi alanları, girişimcilik kültürü ve nitelikli insan kaynağıyla AR-GE ve üretimde güçlü, küresel şoklara dayanıklı Türkiye'yi hep birlikte inşa ettiklerini anlattı. "Suyun planlı yönetimi, tercihten öte zorunluluktur" Zorluklara rağmen Türkiye ekonomisinin 13 çeyrektir büyümesini kesintisiz sürdürdüğünü, ihracatın, geçen yıl 255,8 milyar dolar seviyesine çıkarak Cumhuriyet tarihinin rekorunu kırdığını vurgulayan Kacır, "Bugün ticari araç, güneş paneli, beyaz eşya, çimento üretiminde Avrupa'da birinci, 22 yılda Organize Sanayi Bölgesi sayısını 192'den 361'e çıkarmış, 101 teknoparkı, 1600'den fazla AR-GE ve tasarım merkeziyle her geçen gün daha da büyüyen, AR-GE ve inovasyon alt yapısına sahip Türkiye var." diye konuştu. İklim değişikliğine bağlı olarak seller, hava kirliliği, orman yangınları, kuraklık gibi afetlerin dünya genelinde milyonlarca insanı etkilediğine ve ekonomilere zarar verdiğine değinen Kacır, Akdeniz iklim kuşağında yer alan Türkiye'nin iklim krizinden en fazla etkilenen ülkelerden biri olduğuna işaret etti. Bakan Kacır, yapılan çalışmaların, iklim değişikliğine bağlı olarak ülkedeki su varlığının yüzde 25'e varan oranlarda azalabileceğini gösterdiğine dikkati çekerek, şöyle devam etti: "Türkiye bulunduğu coğrafyadaki birçok ülkeye göre daha şanslı konumda olmasına rağmen, su stresi yaşayan ülkelerden biridir. Suyun verimli ve etkin kullanımı, ülkemizde başarılı yeşil dönüşüm politikasının elbette temel bileşenidir. Sektörler arası ortak kullanılan kaynak olarak suyun planlı yönetimi, tarımdan endüstriyel kullanıma kadar geniş yelpazede su ayak izini azaltıcı adımların hayata geçirilmesi, sürdürülebilir ve kapsayıcı büyümeyi tesis etmemiz için tercihten öte zorunluluktur." "Yeşil dönüşümü öncelikli yatırımlar kapsamında değerlendireceğiz" Yeşil dönüşümü büyümenin odağına aldıkları yeni dönemde su kaynaklarının etkin ve verimli kullanımını destekleyecek adımları hayata geçirdiklerinden bahseden Kacır, Organize Sanayi Bölgelerinin (OSB) ihtiyaç duyduğu arıtma tesislerini hayata geçirmek üzere 42 milyar lira yatırım büyüklüğüne sahip 75 atık su arıtma tesisi projesini desteklediklerini bildirdi. Bakan Kacır, bu kapsamda, "Ergene Havzası Koruma Eylem Planı" çerçevesinde yaklaşık 82 kilometrelik kolektör hattını tamamlayarak denize deşarjını tamamladıklarını anımsatarak, şöyle konuştu: "Ayrıca Ergene Nehri'nin kirliliğini önleyecek 'Ergene Havzası Organize Sanayi Bölgeleri Müşterek Atıksu Arıtma Tesisleri'nin 5'ini tamamladık, gerçekleştirdik. Derin Deşarj Projesi'ni de gerçekleştirerek günde 160 bin metreküp suyun denize derin deşarj edilmesini sağlıyoruz. Yürütülen projeler için bugüne kadar toplam 16 milyar lira destek sağladık. Yakın zamanda kamuoyuyla paylaşacağımız 'Yeşil Dönüşüm Destek Programı' ile de sanayinin yeşil dönüşümüne yönelik yatırımları öncelikli yatırımlar kapsamında değerlendireceğiz. Nasıl araştırma geliştirme çalışmalarını yürüten sanayi tesislerimizi AR-GE merkezi olarak etiketlendiriyor ve uzun dönemde destekliyorsak, sanayicilerimizin yeşil dönüşüm projelerini de uzun ve verimli desteklemeye dönük yeni programı devreye alacağız. Sanayimizin yeşil ve döngüsel ekonomiye geçişi için uluslararası finansman kaynaklarına erişimini de hızlandırıyoruz." Dünya Bankası işbirliğiyle hayata geçirdikleri "Türkiye Yeşil Sanayi Projesi" ile 450 milyon dolarlık finansmanı, sanayicilere, KOBİ'lere ve yeşil teknoloji girişimlerine sunduklarına işaret eden Kacır, Türk sanayisini yeşil dönüşümde örnek ve öncü hale getirdiklerini vurguladı. "OSB'lerin yeşil altyapı yatırımlarına 300 milyon dolar finansman sağlıyoruz" Bakan Kacır, KOSGEB'e ayırdıkları 250 milyon dolarlık kısmıyla, KOBİ'lerin su, enerji ve ham madde verimliliği, sürdürülebilir ve iklime dayanıklı atık geri dönüşümüne yönelik yeşil dönüşüm projelerine 4 milyon liraya kadar destek verdiklerini anlatarak, "Türkiye Organize Sanayi Bölgeleri Projesi" ile OSB'lerin yeşil altyapı yatırımlarına 300 milyon dolar finansman sağladıklarını kaydetti. Proje kapsamında OSB'lerin yeşil ve teknolojik çözümler içeren altyapı, ileri atıksu arıtma tesisi, su geri kazanım, GES, sıfır atık, biyogaz tesisi projelerini desteklediklerini, OSB'lerin verimliliğini, çevresel sürdürülebilirliğini ve rekabet gücünü yükseltmeyi hedeflediklerinin altını çizen Kacır, proje kapsamında 17 arıtma projesi için 3,5 milyar lira kaynak ayırdıklarını, kuracakları veya modernize edecekleri tesislerle 29 milyon metreküpün üzerinde su arıtımı, 6,6 milyon metreküp su tasarrufu gerçekleştireceklerine dikkati çekti. "Yenilikçi su verimliliği çözümlerinin geliştirilmesi ve uygulanması için TÜBİTAK destek programlarıyla, son 22 yılda 183 projeye ve 286 bilim insanımıza 617 milyon lira destek olduk" diyen Kacır, "BİGG Yeşil Büyüme Çağrıları" ile su kaynaklarının etkin ve verimli kullanımını sağlayan iş fikirlerine 900 bin liraya kadar girişimcilik proje desteği verdiklerini söyledi. Bakan Kacır, Demir-çelik, alüminyum, çimento, kimyasallar, plastik ve gübre sektörlerinde, sanayi kuruluşların teknolojik ihtiyaçlarını tespit ettikleri "Yeşil Büyüme Teknoloji Yol Haritası" ile onların aynı zamanda su ayak izini azaltacak projelerini ortaya koyduklarını anlattı. 10 yıl içerisinde yüzde 50 su kazanımı hedefi Sanayi bölgelerinin sürdürülebilir kalkınma amaçları doğrultusunda uluslararası standartlara ulaşmasını sağlayacak "Yeşil OSB Sertifikasyon Sistemi"ni hayata geçirdiklerini anımsatan Kacır, tüm bu attıkları adımlarla ve hayata geçirecekleri projelerle sanayinin yeşil ve çevreci dönüşümünü tesis edeceklerini dile getirdi. Bakan Kacır, hedeflerinin, gelecek 10 yıl içerisinde yüzde 50'ye varan su kazanımının sağlanması olduğunu aktararak, bugün Tarım ve Orman Bakanlığı ile imzalayacakları "Sanayide Su Verimliliği Çalışmaları Kapsamında Yapılacak İş Birliğine Yönelik Protokol"ün, her iki bakanlığın sanayide su verimliliği uygulamalarına yönelik işbirliklerine hız kazandıracağını belirtti. Protokol kapsamında, sanayide su verimliliğini artıracak mevzuat, farkındalık ve destek mekanizmaları çalışmalarına daha faza yoğunlaşacaklarına değinen Kacır, "Nasıl ki, Milli Teknoloji Hamlesi ile toplumsal seferberliği sağladıysak, ülkemizin yeşil dönüşümünde de aynı seferberlik ruhunu harekete geçiriyoruz. Bu dönüşümü geleceğin Türkiye'sini inşa etmek, gençlerimize, çocuklarımıza daha yaşanabilir dünya bırakmak için hep birlikte gerçekleştireceğiz." ifadelerini kullandı. ."""
+
+print(news_to_x(news))

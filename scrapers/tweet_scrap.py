@@ -57,6 +57,7 @@ def read_and_save():
     combined_dataset.drop(columns=columns_to_drop, inplace=True)
     combined_dataset['Tweet ID'] = combined_dataset['Tweet ID'].astype(str).str.split(':').str[-1]
     combined_dataset.rename(columns={'Photo Link': 'photo_link', 'Tweet ID':'tweet_id'}, inplace=True)
+    combined_dataset.dropna(subset=['Content'], inplace=True)
     combined_dataset.to_csv('data/combined_tweets.csv', index=False)
 
 def get_tweets():

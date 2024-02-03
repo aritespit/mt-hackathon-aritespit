@@ -41,3 +41,4 @@
 @ticaret
 @Merkez_Bankasi
 @rterdogan
+@aliyerlikaya
