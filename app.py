@@ -8,6 +8,7 @@ from scrapers import aa_scraper
 from create_db import *
 from scrapers import tweet_scrap
 import os
+from openai import OpenAI
 
 load_dotenv()
 
@@ -50,8 +51,9 @@ class News(db.Model):
     
 @app.route('/')
 def home():
-    return render_template('index.html')
-
+    tweets = Tweet.query.all()
+    news = News.query.all()
+    return render_template('index.html', tweets=len(tweets), news=len(news))
 
 # creating news from tweets
 @app.route('/tweets', methods=['GET', 'POST'])
@@ -61,7 +63,7 @@ def tweets():
     Additionally allows the user to refresh the news articles and generate a new summary with user feedback.
     """
     # print(index)
-    llm = OpenAI(model_name="gpt-3.5-turbo-instruct", api_key="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", temperature=0.1)
+    client = OpenAI(api_key="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")
     entries = Tweet.query.all()
     summary = None
     index = None
@@ -120,9 +122,8 @@ def tweets():
             summary = response.generations[0][0].text
         elif feedback:
             
-            template="""
-            You are a news assistant that turns the posts published by institutions, organizations or ministers on their social media accounts into news.
-            There is a feedback given you for you to correct given text.
+            feedback_prompt=f"""
+            You are a news assistant who turns the posts published by institutions, organizations or ministers on their social media accounts into newsThere is 'feedback' given by user to you to correct the given text. Take this warning into consideration and correct the text by paying attention to Turkish spelling rules."
             
             ### Instruction:
             Replying in Turkish is a MUST, if your answer is going to be english translate it to Turkish
@@ -130,38 +131,63 @@ def tweets():
             Now text is : {text}
             Now feedback is: {feedback}
             """
-            
+
             tweet_to_adjust = Tweet.query.filter_by(index=display_no).first()
+            print(tweet_to_adjust)
             text=tweet_to_adjust.news
-            prompt = PromptTemplate(input_variables=["text","feedback"], template=template)
-            llm_chain = LLMChain(llm=llm, prompt=prompt)
-            response = llm_chain.generate([{"text": text, "feedback": feedback}])
-            summary = response.generations[0][0].text
+            response = client.completions.create(
+                model="gpt-3.5-turbo-instruct",
+                max_tokens=500,
+                prompt=feedback_prompt,
+                temperature=0.1
+            )
+            summary =  response.choices[0].text
             print(text)
 
         elif display_no:
             tweet_to_display = Tweet.query.filter_by(index=display_no).first()
             summary = tweet_to_display.news   
+        
         elif text:
-            template = """
-            You are a news assistant that turns the posts published by institutions, organizations or ministers on their social media accounts into news. 
-            You need to understand the context and convert it into a news format. The news format includes a headline (title), and a body part for the newly generated full text of the news. 
-            Body part has 3 paragraphs. First paragraph is the summary of tweet.
-            Second paragraph must JUST write surname of the person if  text in parentheses indicates a person, second paragraph must JUST write full name of the ministry or organization if  text in parentheses indicates a ministry or organizational account. 
-            Lastly, third paragraph gives tweet and its' explanation. 
+            text = person + " " + text
+            xtonews_input=[
+                    {
+                    "role": "system",
+                    "content":             """You are a news assistant that turns the posts published by institutions, organizations or ministers on their social media accounts into news. 
+                    You need to understand the context and convert it into a news format. The news format includes a headline (title), and a body part for the newly generated full text of the news. 
+                    Body part has 3 paragraphs. First paragraph is the summary of tweet.
+                    Second paragraph must JUST write surname of the person if  text in parentheses indicates a person, second paragraph must JUST write full name of the ministry or organization if  text in parentheses indicates a ministry or organizational account. 
+                    Lastly, third paragraph gives tweet and its' explanation. 
 
-            ### Instruction:
-            The text in parentheses indicates which person, institution or organization gave the statement. 
-            Create news that contains title, and body parts meanwhile news format defined above. 
-            Replying in Turkish is a MUST, if your answer is going to be english translate it to Turkish
+                    ### Instruction:
+                    The text in parentheses indicates which person, institution or organization gave the statement. 
+                    Create news that contains title, and body parts meanwhile news format defined above. 
+                    Replying in Turkish is a MUST, if your answer is going to be english translate it to Turkish\n"""
+                    },
+                    {
+                    "role": "user",
+                    "content": "(Enerji ve Tabii Kaynaklar Bakanı Alparslan Bayraktar) İran Cumhurbaşkanı Sayın İbrahim Reisi’nin Ankara ziyareti öncesi İran Petrol Bakanı Sayın Javad Owji ve beraberindeki heyet ile Bakanlığımızda bir araya geldik.\n\nDerin ilişkilere sahip olduğumuz İran ile enerji alanındaki iş birliğimizi daha da ileri taşıma konusundaki kararlılığımızı dile getirdik.\n\nÖzellikle doğal gaz alanında iş birliğimizi yeni dönemde daha geniş çerçevede ele alınması gerektiğini ifade ettik.\n"
+                    },
+                    {
+                    "role": "assistant",
+                    "content": "Bakan Bayraktar, İranlı mevkidaşı ile 'enerji işbirliğini' görüştü\n\nEnerji ve Tabii Kaynaklar Bakanı Alparslan Bayraktar, İran Petrol Bakanı Javad Owji ile iki ülkenin enerji işbirliğine dair konuları ele aldı.\n\n'Derin ilişkilere sahip olduğumuz İran ile enerji alanındaki işbirliğimizi daha da ileri taşıma konusundaki kararlılığımızı dile getirdik. Özellikle doğal gaz alanında işbirliğimizin yeni dönemde daha geniş çerçevede ele alınması gerektiğini ifade ettik.'"
+                    },
+                    {
+                        "role":"user",
+                        "content":text}
+                ]
             
-            Now your input is: {text}
-            """
-            text = (person + " " + text)
-            prompt = PromptTemplate(input_variables=["text"], template=template)
-            llm_chain = LLMChain(llm=llm, prompt=prompt)
-            response = llm_chain.generate([{"text": text}])
-            summary = response.generations[0][0].text
+            response = client.chat.completions.create(
+            model="gpt-3.5-turbo",
+            messages=xtonews_input,
+            temperature=0.2,
+            max_tokens=554,
+            top_p=1,
+            frequency_penalty=0,
+            presence_penalty=0
+            )
+            summary = response.choices[0].message.content
+
     
     try:
         return render_template('tweets.html', entries=entries, summary=summary, index=index, display_no=display_no, accounts=accounts)
@@ -176,7 +202,7 @@ def tweets():
 @app.route('/news', methods=['GET','POST'])
 def news():
 
-    llm = OpenAI(model_name="gpt-3.5-turbo-instruct", api_key="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", temperature=0.1)
+    client = OpenAI(api_key="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")
     index=None
     summary = None
     if request.method == 'POST':
@@ -194,8 +220,9 @@ def news():
         
         
         elif text:
+            print("boop new architecture alert")
 
-            template = """
+            news_to_x=f"""
             You are an AI assistant for News Agency to shorten the longer news article into 3 bullet points. You are required to understand the context then create these bulletpoints. Your bulletpoints should contain important parts of the article, i.e. parts that contain numerical values or explain the text best.
 
             ### Instruction:
@@ -204,16 +231,16 @@ def news():
             Do it as thoroughly and detailed as you can while keeping the bulletpoints short.
             Always reply in Turkish; if your answer is not in Turkish, translate it.
             Keep the bulletpoints short.
-
             ### User Input: {text}
             ### Response: Your Answer
-
-            """
-
-            prompt = PromptTemplate(input_variables=["text"], template=template)
-            llm_chain = LLMChain(llm=llm, prompt=prompt)
-            response = llm_chain.generate([{"text": text}])
-            summary = response.generations[0][0].text
+                        """
+            response = client.completions.create(
+                model="gpt-3.5-turbo-instruct",
+                max_tokens=500,
+                prompt=news_to_x,
+                temperature=0.1
+            )
+            summary =  response.choices[0].text
 
     entries = News.query.all()
 
