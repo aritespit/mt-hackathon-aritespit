@@ -1,5 +1,6 @@
-![Vq3qKv4-removebg-preview (1)](https://github.com/aritespit/aritespit/assets/64483224/0ab01a40-0851-43cc-bb61-2523434e7056)
-
+<p align="center">
+  <img src="https://github.com/aritespit/aritespit/assets/64483224/0ab01a40-0851-43cc-bb61-2523434e7056" alt="Resim Açıklaması">
+</p>
 
 # Instant Content Tracking and Reporting in the New Media Age
 New media has become one of the most important resources for media organizations today. As the ArıTespit team, we have developed an artificial intelligence-supported project that allows instant content monitoring and reporting of accounts determined by journalists in the new media. Our project also facilitates the work of journalists by converting news texts into new media content.
