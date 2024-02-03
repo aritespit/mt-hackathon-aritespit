@@ -32,6 +32,7 @@ class Tweet(db.Model):
     Handle = db.Column(db.String(255))
     Timestamp = db.Column(db.DateTime)
     Content = db.Column(db.Text)
+    tweet_id = db.Column(db.Text)
     is_generated = db.Column(db.Boolean)
     news = db.Column(db.Text)
     photo_link = db.Column(db.Text)

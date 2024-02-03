@@ -46,6 +46,8 @@ Twitler
 							{% endif %}
 
 						</form>
+						<a href="https://twitter.com/username/status/{{entry.tweet_id}}" class="btn btn-primary" target="_blank">Tweet'i Görüntüle</a>
+
                         {% if entry.photo_link %}
 							<input type="hidden" name="display_no" value="{{ entry.index }}" />
                             <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#photoModal{{ entry.index }}">
