@@ -72,6 +72,7 @@ def tweets():
         person = request.form.get('name')
         text = request.form.get('text')
         index = request.form.get('index')
+        etiket_no = request.form.get('etiket_no')
         generated_news = request.form.get('generated_news')
         display_no = request.form.get('display_no')
         feedback = request.form.get('feedback')
@@ -98,6 +99,25 @@ def tweets():
                 tweet_to_update.is_generated = 1
                 db.session.commit()
 
+        elif etiket_no:
+            print(etiket_no)
+            template = """
+            Given the following news article text, extract and list the most relevant keywords. Focus on identifying terms that are significant to the content's overall meaning, including any notable names, places,subjects in the sentences. Please provide the keywords in a bullet-point format for clarity.
+
+            ---
+
+            Your text is "{text}"
+
+            ---
+            Remove VERB in results. Limit 10.
+            """
+            
+            tweet_to_adjust = Tweet.query.filter_by(index=etiket_no).first()
+            text=tweet_to_adjust.news
+            prompt = PromptTemplate(input_variables=["text"], template=template)
+            llm_chain = LLMChain(llm=llm, prompt=prompt)
+            response = llm_chain.generate([{"text": text}])
+            summary = response.generations[0][0].text
         elif feedback:
             
             template="""
