@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://github.com/aritespit/aritespit/assets/64483224/0ab01a40-0851-43cc-bb61-2523434e7056" alt="Resim Açıklaması">
+  <img src="static/images/imgur.png" alt="Resim Açıklaması">
 </p>
 
 # Instant Content Tracking and Reporting in the New Media Age
