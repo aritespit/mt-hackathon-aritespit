@@ -13,10 +13,13 @@ New media has become one of the most important resources for media organizations
 - Ömer Bera Dinç [Supomera](https://www.github.com/Supomera)
   
 ## Run Locally
-Step by step [instruction](https://github.com/aritespit/aritespit/blob/main/deployment.md)
+Step by step [Instruction](https://github.com/aritespit/aritespit/blob/main/deployment.md)
 
 ## Demo
-This project keeps the instant shares of reliable sources (ministers, state institutions...) in new media in a database and producing news from selected contents. In this way, we make it easier for reporters to follow the content in new media. 
+This project keeps the instant shares of reliable sources (ministers, state institutions...) in new media in a database and produces news from selected contents. In this way, we make it easier for reporters to follow the content in new media. A demo video for this problem is shown below.
+
+https://github.com/aritespit/aritespit/assets/73332933/baf19403-237a-4f82-8a81-24e396a812d7
+
 
 ## State of Art
 Unedited news examples were needed for our project, and since we couldn't find this data in any available source and the hackathon didn't provide it, we had to start without a dataset. In the absence of a dataset, using a Language Model (LLM) would be the most suitable approach. After experimenting with Mistral models with different quantizations, StableLM, and LLaMa, and spending time on them, we conducted trials with GPT3.5 and ChatGPT4 provided by the hackathon. Since we achieved the most favorable results for our goal with GPT3.5, we continued our work on this model.
