@@ -66,7 +66,7 @@ You can scrape the data manually with the following scripts:
 ```
 
 ## State of Art
-Unedited news examples were needed for our project, and since we couldn't find this data in any available source and the hackathon didn't provide it, we had to start without a dataset. In the absence of a dataset, using a Language Model (LLM) would be the most suitable approach. After experimenting with Mistral models with different quantizations, StableLM, and LLaMa, and spending time on them, we conducted trials with ChatGPT3.5 and ChatGPT4 provided by the hackathon. Since we achieved the most favorable results for our goal with ChatGPT3.5, we continued our work on this model.
+Unedited news examples were needed for our project, and since we couldn't find this data in any available source and the hackathon didn't provide it, we had to start without a dataset. In the absence of a dataset, using a Language Model (LLM) would be the most suitable approach. After experimenting with Mistral models with different quantizations, StableLM, and LLaMa, and spending time on them, we conducted trials with G.5 and ChatGPT4 provided by the hackathon. Since we achieved the most favorable results for our goal with ChatGPT3.5, we continued our work on this model.
 
 Normally, we evaluate the success of models based on metrics such as F1 score, precision, recall, etc. with the help of test datasets. However, in the case of Language Models (LLMs), this approach is not applicable. Instead, we decided on the success of the models by considering Inference Speed as a numerical magnitude and assessing the relevance of the outputs to the purpose and the way the media sector operates. 
 
