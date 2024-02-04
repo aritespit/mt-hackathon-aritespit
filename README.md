@@ -20,6 +20,7 @@ This project keeps the instant shares of reliable sources (ministers, state inst
 
 https://github.com/aritespit/aritespit/assets/73332933/baf19403-237a-4f82-8a81-24e396a812d7
 
+The database is shown on the left side. Followed accounts can be managed by the button (shown first in the video). There is a color coding that indicates submitted news. If any news is submitted, it turns the tweet block to green from yellow. After submitting news, new commands can be given by "Komut Gir" button. Also submitted news can be shown afterwards with "Haberi Görüntüle" button. Last but not least, if there is a picture on the tweet there is an icon to see that picture. 
 
 ## State of Art
 Unedited news examples were needed for our project, and since we couldn't find this data in any available source and the hackathon didn't provide it, we had to start without a dataset. In the absence of a dataset, using a Language Model (LLM) would be the most suitable approach. After experimenting with Mistral models with different quantizations, StableLM, and LLaMa, and spending time on them, we conducted trials with GPT3.5 and ChatGPT4 provided by the hackathon. Since we achieved the most favorable results for our goal with GPT3.5, we continued our work on this model.
