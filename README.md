@@ -15,6 +15,9 @@ New media has become one of the most important resources for media organizations
 ## Run Locally
 Step by step [Instruction](https://github.com/aritespit/aritespit/blob/main/deployment.md)
 
+## Presentation
+Presentation can be accessed from the following [link](https://www.canva.com/design/DAF7pu5hD7g/fGEsAxh9rn0sDVb0XHBSpA/edit?utm_content=DAF7pu5hD7g)
+
 ## Demo
 ### Problem 1
 This project keeps the instant shares of reliable sources (ministers, state institutions...) in new media in a database and produces news from selected contents. In this way, we make it easier for reporters to follow the content in new media. A demo video for this problem is shown below.
@@ -29,9 +32,6 @@ This project also transforms existing news into a new media format. We help repo
 https://github.com/aritespit/aritespit/assets/73332933/83f098ae-5288-4716-9bbd-e0b6a87fa269
 
 Interfaces of X > news, and news > X are similar. Here using "Özetle" button, suggestions are being made. 
-
-## Presentation
-Presentation can be accessed from the following [link](https://www.canva.com/design/DAF7pu5hD7g/fGEsAxh9rn0sDVb0XHBSpA/edit?utm_content=DAF7pu5hD7g)
 
 ## State of Art
 Unedited news examples were needed for our project, and since we couldn't find this data in any available source and the hackathon didn't provide it, we had to start without a dataset. In the absence of a dataset, using a Language Model (LLM) would be the most suitable approach. After experimenting with Mistral models with different quantizations, StableLM, and LLaMa, and spending time on them, we conducted trials with GPT3.5 and ChatGPT4 provided by the hackathon. Since we achieved the most favorable results for our goal with GPT3.5, we continued our work on this model.
