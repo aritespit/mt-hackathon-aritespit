@@ -211,20 +211,22 @@ def tweets():
                     "X sosyal medya hesabından habere ilişkin paylaşım yapıldı.",
                     "X sosyal medya hesabından paylaşımda bulundu."]
 
-            paragraphs = summary.split('\n\n')
+            try: 
+                paragraphs = summary.split('\n\n')
 
-            first_paragraph = paragraphs[1] if paragraphs else ''
+                first_paragraph = paragraphs[1] if paragraphs else ''
 
-            random_second = random.choice(second)
+                random_second = random.choice(second)
 
-            random_second = person + ", " + random_second
+                random_second = person + ", " + random_second
 
-            result = f"\n\n {mahrec} - {first_paragraph} \n\n {random_second}"
+                result = f"\n\n {mahrec} - {first_paragraph} \n\n {random_second}"
 
-            title = paragraphs[0] if paragraphs else ''
-            last_paragraph = paragraphs[-1] if paragraphs else ''
+                title = paragraphs[0] if paragraphs else ''
+                last_paragraph = paragraphs[-1] if paragraphs else ''
 
-            summary = title + result + "\n\n" + last_paragraph
+                summary = title + result + "\n\n" + last_paragraph
+            except: pass
     
 
     try:
