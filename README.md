@@ -15,7 +15,7 @@ New media has become one of the most important resources for media organizations
 ## Run Locally
 Step by step [instruction](https://github.com/aritespit/aritespit/blob/main/deployment.md)
 
-##Demo
+## Demo
 This project keeps the instant shares of reliable sources (ministers, state institutions...) in new media in a database and producing news from selected contents. In this way, we make it easier for reporters to follow the content in new media. 
 
 ## State of Art
