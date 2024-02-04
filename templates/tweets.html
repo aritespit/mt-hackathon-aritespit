@@ -50,7 +50,7 @@ Twitler
 
                         {% if entry.photo_link %}
 							<input type="hidden" name="display_no" value="{{ entry.index }}" />
-                            <button style="font-size: 10px; padding: 3px 6px;margin: auto;" type="button" class="btn btn-outline-light" data-toggle="modal" data-target="#photoModal{{ entry.index }}">
+                            <button style="font-size: 10px; padding: 3px 6px;margin: auto; position: relative; left: 50%; transform: translateX(-50%);" type="button" class="btn btn-outline-light" data-toggle="modal" data-target="#photoModal{{ entry.index }}">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-card-image" viewBox="0 0 16 16">
                                     <path d="M6.002 5.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0"/>
                                     <path d="M1.5 2A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h13a1.5 1.5 0 0 0 1.5-1.5v-9A1.5 1.5 0 0 0 14.5 2zm13 1a.5.5 0 0 1 .5.5v6l-3.775-1.947a.5.5 0 0 0-.577.093l-3.71 3.71-2.66-1.772a.5.5 0 0 0-.63.062L1.002 12v.54L1 12.5v-9a.5.5 0 0 1 .5-.5z"/>
@@ -65,13 +65,13 @@ Twitler
                                 <div class="modal-dialog modal-lg">
                                     <div class="modal-content">
                                         <div class="modal-header">
-                                            <h5 class="modal-title" id="photoModalLabel">Photo</h5>
+                                            <h5 class="modal-title" id="photoModalLabel">Haber Fotoğrafı</h5>
                                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                                 <span aria-hidden="true">&times;</span>
                                             </button>
                                         </div>
                                         <div class="modal-body">
-                                            <img src="{{ entry.photo_link }}" class="img-fluid" alt="Photo">
+                                            <img src="{{ entry.photo_link }}" class="img-fluid" alt="Haber Fotoğrafı">
                                         </div>
                                     </div>
                                 </div>
@@ -178,6 +178,12 @@ Twitler
     margin-right: 5px;
     cursor: pointer;
 }
+
+.img-fluid {
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
+}
 </style>
 
 <script>
@@ -235,7 +241,7 @@ function showPhoto(photoLink, rowIndex) {
     imgElement.src = photoLink;
     imgElement.style.width = "480px";
     imgElement.style.height = "270px"; 
-
+    
     var closeButton = document.createElement("button");
     closeButton.textContent = "Close";
     closeButton.onclick = function () {

@@ -104,17 +104,18 @@ def tweets():
                 db.session.commit()
 
         elif etiket_no:
+            # Find the tweet based on the content, extract the summary and create tags
             print(f'Etiket no: {etiket_no}')
             tweet_to_adjust = Tweet.query.filter_by(index=etiket_no).first()
             text=tweet_to_adjust.news
-
+            print(text)
 
             template=[{"role":"system", 
                         "content":f"""Given the following news article text, extract and list the most relevant keywords. 
                         Focus on identifying terms that are significant to the content's overall meaning, including any notable names, places, subjects in the sentences. Keywords should be about
                         the news, it should be about the main topic of the news.
                         Do not make up stuff and do not provide meaningless words additionally provide the keywords in a bullet-point format for clarity. 
-                        Keywords shouldn't be action verbs. Show top 5 keywordss.."""},
+                        Keywords shouldn't be action verbs. Show top 3 keywordss."""},
                         {"role":"user",
                         "content": text}]
             
@@ -133,9 +134,10 @@ def tweets():
 
 
         elif feedback:
+            # find the tweet based on the content, adjust the summary based on the feedback
             tweet_to_adjust = Tweet.query.filter_by(index=display_no).first()
-            print(tweet_to_adjust)
             text=tweet_to_adjust.news
+            print(text)
 
             feedback_sys=[{"role":"system", 
                         "content":f"""You are a news assistant who turns the posts published by institutions, organizations or ministers on their social media accounts into news. 
@@ -158,6 +160,7 @@ def tweets():
             summary =  response.choices[0].message.content
 
         elif display_no:
+            # Find the tweet based on the content
             tweet_to_display = Tweet.query.filter_by(index=display_no).first()
             summary = tweet_to_display.news   
         
@@ -223,6 +226,7 @@ def tweets():
 
             summary = title + result + "\n\n" + last_paragraph
     
+
     try:
         return render_template('tweets.html', entries=entries, summary=summary, index=index, display_no=display_no, accounts=accounts)
     except:

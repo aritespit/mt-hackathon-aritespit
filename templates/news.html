@@ -22,7 +22,9 @@ News
                 {% for entry in entries %}
                     <tr>
                         <td>{{ entry.index }}</td>
-                        <td>{{ entry.Link }}</td>
+                        <td>
+                            <a href="{{ entry.Link }}" class="scrollable-cell">Haber Uzantısı</a>
+                        </td>
                         <td>
                             <div class="scrollable-cell">{{ entry.Content }}</div>
                         </td>
@@ -50,7 +52,7 @@ News
 		<form action="/news" method="POST">
 			<textarea name="generated_summary" style="width: 100%;height:450px;">{{ summary }}</textarea>
 			<input type="hidden" name="index" value="{{ index }}">
-            <input type="submit" value="Submit Summary">
+            <input type="submit" value="Haberi Gönder">
         </form>
         {% endif %}
     </div>
