@@ -13,57 +13,8 @@ New media has become one of the most important resources for media organizations
 - Ömer Bera Dinç [Supomera](https://www.github.com/Supomera)
   
 ## Run Locally
+Step by step [instruction](https://github.com/aritespit/aritespit/blob/main/deployment.md)
 
-Clone the project
-
-```bash
-  git clone https://github.com/aritespit/aritespit
-```
-
-Go to the project directory
-
-```bash
-  cd aritespit
-```
-
-
-Enter your environmental variables for MySQL connection in ".env" file:
-
-```bash
-DB_HOST=<your DB_HOST>
-DB_USER=<your DB_USER>
-DB_PASSWORD=<your DB_PASSWORD>
-```
-Install dependencies
-
-```bash
-  pip install -r requirements.txt
-```
-
-Execute the script to create the database
-```bash
-  python create_db.py 
-```
-
-Start the app
-
-```bash
-  python app.py
-```
-
-
-## Running Tests
-
-You can scrape the data manually with the following scripts:
-
-1) To collect Twitter data manually execute,
-```bash
-  python scrapers/tweet_scrap.py
-```
-2) To collect Anadolu Ajansı data manually execute,
-```bash
-  python scrapers/aa_scraper.py
-```
 
 ## State of Art
 Unedited news examples were needed for our project, and since we couldn't find this data in any available source and the hackathon didn't provide it, we had to start without a dataset. In the absence of a dataset, using a Language Model (LLM) would be the most suitable approach. After experimenting with Mistral models with different quantizations, StableLM, and LLaMa, and spending time on them, we conducted trials with GPT3.5 and ChatGPT4 provided by the hackathon. Since we achieved the most favorable results for our goal with GPT3.5, we continued our work on this model.
